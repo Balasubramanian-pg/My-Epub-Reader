@@ -449,3 +449,441 @@ It is a **thinking system** with books as inputs, notes as ideas, and links as m
 
 Everything else exists to support that core truth.
 
+# EPUB Reader with Personal Knowledge Graph
+
+## Repository Layer Technical Documentation
+
+## Purpose and Scope
+
+This document explains the **Repository Layer**, which sits above the database and below the UI. This layer is responsible for **business logic, graph integrity, and conceptual enforcement**.
+
+While the database defines what *can* exist, the repository layer defines what *should* exist.
+
+This layer ensures that:
+
+* Books remain sources, not containers
+* Notes remain first-class ideas
+* Links remain explicit and meaningful
+* Backlinks emerge automatically
+* Full-text search suggests, but never decides
+
+---
+
+## Architectural Role of the Repository Layer
+
+### Position in the Stack
+
+* UI Layer consumes **domain models**, not raw entities
+* Repository Layer orchestrates:
+
+  * Multiple DAOs
+  * Graph rules
+  * Indexing side effects
+* Database Layer remains unaware of intent
+
+The repository layer is where **meaning** is enforced.
+
+---
+
+## Domain Models (UI-Facing Contracts)
+
+### BookWithMetadata
+
+An enriched projection of a book for UI consumption.
+
+**Why it exists**
+
+The UI should not assemble counts and relationships itself. This model provides a cohesive snapshot.
+
+**Included context**
+
+* Book entity
+* Highlight count
+* Note count
+* Tags
+* Reading progress
+
+This supports library views, dashboards, and book detail screens.
+
+---
+
+### NoteWithLinks
+
+The most important domain model in the system.
+
+**Conceptual importance**
+
+* Represents a **node plus its graph neighborhood**
+* Makes backlinks a first-class concept
+* Prevents UI from ignoring graph memory
+
+**Included context**
+
+* The note itself
+* Outgoing links
+* Incoming links (backlinks)
+* Optional grounding highlight
+* Optional source book
+
+Every serious note view should be powered by this model.
+
+---
+
+### SearchResult (Sealed Class)
+
+A unified abstraction for global search.
+
+**Variants**
+
+* BookPassage
+* NoteResult
+
+This allows the UI to render heterogeneous results without leaking storage details.
+
+---
+
+## BookRepository
+
+### Responsibilities
+
+* Library orchestration
+* Book lifecycle management
+* Metadata aggregation
+* Book-level FTS indexing control
+
+---
+
+### Enriched Book Retrieval
+
+`getAllBooksWithMetadata`
+
+* Combines multiple DAOs
+* Produces UI-ready models
+* Keeps UI stateless and reactive
+
+This is a deliberate anti-pattern to “query everything in the UI”.
+
+---
+
+### Book Import Flow
+
+`importBook`
+
+This is the **entry point for EPUB ingestion**.
+
+Responsibilities include:
+
+* Persisting book metadata
+* Inserting chapters
+* Initializing reading progress
+
+EPUB parsing and text extraction happen outside, but persistence happens here.
+
+---
+
+### Deletion Semantics
+
+`deleteBook`
+
+Key design rule:
+
+* Relational cleanup is handled by CASCADE
+* FTS cleanup must be manual
+
+This separation avoids accidental orphaned search data.
+
+---
+
+### DRM-Aware Indexing
+
+`indexBookText`
+
+* DRM-protected books are explicitly excluded from FTS
+* This preserves legal and functional boundaries
+
+The repository layer enforces this policy, not the database.
+
+---
+
+## HighlightRepository
+
+### Responsibilities
+
+* Highlight lifecycle management
+* No graph logic
+* No note creation logic
+
+Highlights are deliberately kept simple.
+
+**Key principle**
+
+Highlights are context, not cognition.
+
+---
+
+## NoteRepository (Knowledge Graph Core)
+
+### Central Responsibility
+
+This repository enforces **knowledge graph integrity**.
+
+If this repository is correct, the system thinks correctly.
+
+---
+
+### Retrieving Notes with Context
+
+`getNoteWithLinks`
+
+This method is non-negotiable.
+
+It guarantees that:
+
+* Outgoing links are visible
+* Backlinks are visible
+* Context is preserved
+
+Backlinks are not optional UI decorations. They are memory.
+
+---
+
+### Note Creation Modes
+
+#### Standalone Notes (Thinking-First)
+
+`createStandaloneNote`
+
+* No book required
+* No highlight required
+* Indexed immediately
+
+This supports ideation outside reading.
+
+---
+
+#### Highlight-Based Notes (Reading-First)
+
+`createNoteFromHighlight`
+
+* Anchors idea to source text
+* Preserves book and highlight references
+* Indexed immediately
+
+Both flows are equal citizens.
+
+---
+
+### Note Updates and Reindexing
+
+Every note update:
+
+* Updates `modifiedAt`
+* Triggers FTS reindexing
+
+Search is always consistent with thought.
+
+---
+
+### Linking Notes (Graph Edges)
+
+`linkNotes`
+
+This method enforces multiple invariants:
+
+* Both notes must exist
+* Self-links are forbidden
+* Duplicate links are prevented
+* Directionality is preserved
+
+Only explicit, human-curated links are allowed.
+
+---
+
+### Unlinking Notes
+
+`unlinkNotes`
+
+* Removes a single directional edge
+* Backlinks disappear automatically
+
+No additional cleanup logic is required.
+
+---
+
+### Note Deletion
+
+`deleteNote`
+
+Deletion guarantees:
+
+* FTS index cleanup
+* Cascade removal of all links
+
+The graph never contains dangling edges.
+
+---
+
+### Related Notes via Search (Suggestions)
+
+`getRelatedNotes`
+
+Purpose:
+
+* Suggest possible connections
+* Never auto-create links
+
+FTS is advisory. The graph remains intentional.
+
+---
+
+### Key Term Extraction
+
+Current implementation:
+
+* Simple tokenization
+* Length filtering
+* OR-based query
+
+This is intentionally naive and replaceable.
+
+---
+
+## SearchRepository
+
+### Responsibilities
+
+* Unified global search
+* Result normalization
+* Context-aware mapping
+
+---
+
+### Global Search
+
+`globalSearch`
+
+Searches:
+
+* Full EPUB content
+* All notes
+
+Returns:
+
+* Book passages with jump targets
+* Notes with content snippets
+
+This supports discovery without collapsing context.
+
+---
+
+## ReadingSessionRepository
+
+### Responsibilities
+
+* Session lifecycle
+* Reading analytics
+* Progress updates
+
+---
+
+### Session Start and End
+
+* Sessions are append-only
+* Progress updates are explicit
+* Duration logic is replaceable
+
+Analytics correctness is separated from reading correctness.
+
+---
+
+### Aggregated Metrics
+
+Supports:
+
+* Weekly reading time
+* Completion tracking
+
+This enables habit and insight features without polluting core models.
+
+---
+
+## Graph Integrity Rules (Enforced by Repositories)
+
+These rules are conceptual, but enforced in code.
+
+### Rule 1: Notes Are Independent
+
+* Notes do not require books
+* Notes do not require highlights
+
+This is enforced by optional foreign keys and repository APIs.
+
+---
+
+### Rule 2: Links Are Explicit
+
+* No automatic graph mutation
+* Suggestions never become structure
+
+This preserves trust in the graph.
+
+---
+
+### Rule 3: Backlinks Are Guaranteed
+
+* Backlinks are derived, not stored
+* Every link has a visible reverse
+
+Memory is a property of structure, not UI.
+
+---
+
+### Rule 4: Highlights Ground, Not Own
+
+* Highlights anchor notes
+* Notes are not subordinate to highlights
+
+This avoids annotation traps.
+
+---
+
+### Rule 5: Books Are Sources
+
+* Notes can span books
+* Cross-book thinking is fundamental
+
+Books are inputs, not silos.
+
+---
+
+### Rule 6: Search Suggests, Graph Remembers
+
+* FTS helps discovery
+* Links preserve meaning
+
+Ephemeral relevance versus durable understanding.
+
+---
+
+### Rule 7: Everything Is Local
+
+* No network dependency
+* Graph is fully exportable
+* Structure is preserved
+
+This system is user-owned by design.
+
+---
+
+## Summary
+
+The repository layer is the **guardian of meaning**.
+
+* The database stores facts
+* The repository enforces philosophy
+* The UI merely reflects both
+
+If the database layer defines *what exists*,
+the repository layer defines *why it exists and how it relates*.
+
+This is where the system stops being an EPUB reader and becomes a thinking tool.
