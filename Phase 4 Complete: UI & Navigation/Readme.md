@@ -765,3 +765,394 @@ By using curated carousels, meaningful metadata, and respectful analytics, this 
 
 It does not shout.
 It quietly orients.
+
+# EPUB Reader with Personal Knowledge Graph
+
+## Phase 4 Final Navigation and App Structure Technical Documentation
+
+## Purpose and Scope
+
+This document explains the **Phase 4 Final Navigation and App Structure**, which binds every previously defined screen into a **coherent, predictable application shell**.
+
+This layer is not about reading, notes, or books in isolation.
+It is about **orientation, movement, and cognitive safety**.
+
+It answers, at all times:
+
+* Where am I?
+* What can I access from here?
+* How do I get back?
+* What persists when I move?
+
+This documentation is intended for engineers responsible for **application flow, navigation correctness, and long-term UX stability**.
+
+---
+
+## Architectural Role of the Navigation Layer
+
+### Position in the Stack
+
+* Owns the global navigation graph
+* Defines screen boundaries and lifetimes
+* Manages back stack behavior
+* Coordinates cross-feature transitions
+
+No feature owns navigation.
+Navigation owns features.
+
+---
+
+## Conceptual Navigation Model
+
+The app follows a **hub-and-spoke model**:
+
+* Bottom navigation tabs are **persistent hubs**
+* Detail screens are **temporary spokes**
+* Reading is a **deep-focus mode**
+* Import and settings are **modal workflows**
+
+This structure minimizes disorientation while supporting depth.
+
+---
+
+## Navigation Routes
+
+### Screen Sealed Class
+
+All destinations are declared centrally.
+
+This provides:
+
+* Compile-time safety
+* Explicit route ownership
+* Predictable deep linking paths
+
+Routes fall into two categories:
+
+* **Top-level destinations**
+  Library, Notes, Settings
+
+* **Detail destinations**
+  Book Details, Reader, Import
+
+---
+
+### Parameterized Routes
+
+Routes such as Book Details and Reader:
+
+* Accept stable identifiers only
+* Avoid passing large objects
+* Encourage repository-backed loading
+
+This prevents state duplication and navigation bugs.
+
+---
+
+## Bottom Navigation Model
+
+### Purpose
+
+Bottom navigation represents **persistent modes of thinking**, not tasks.
+
+Each tab answers a different question:
+
+* Library: What sources do I have?
+* Notes: What ideas have I formed?
+* Settings: How does this system behave?
+
+---
+
+### Design Constraints
+
+* Exactly three tabs
+* No dynamic reordering
+* No nested bottom navigation
+
+This keeps spatial memory intact.
+
+---
+
+## EPubReaderApp Composable
+
+### Role
+
+`EPubReaderApp` is the **root composition boundary**.
+
+It is responsible for:
+
+* Initializing the navigation controller
+* Deciding when global UI elements appear
+* Hosting the navigation graph
+
+Nothing above this composable is stateful.
+
+---
+
+### Bottom Bar Visibility Rules
+
+The bottom bar is visible only on:
+
+* Library
+* Notes
+* Settings
+
+It is hidden on:
+
+* Reader
+* Book Details
+* Import
+
+This reinforces **focus vs navigation** modes.
+
+---
+
+## NavHost and Graph Structure
+
+### Start Destination
+
+The Library screen is the default entry point.
+
+This reflects the mental model that:
+
+* Books are the starting material
+* Everything else emerges from them
+
+---
+
+### Library Flow
+
+Library → Book Details → Reader
+
+This is the most common path and is intentionally linear.
+
+Back navigation always reverses this path cleanly.
+
+---
+
+### Notes Flow
+
+Notes → Note Detail → Linked Notes
+
+This flow is **non-linear by design**.
+
+Navigation allows jumping between notes without collapsing the back stack prematurely.
+
+---
+
+### Reader Flow
+
+Reader is treated as a **deep immersion state**.
+
+* Bottom navigation is hidden
+* Only explicit back navigation exits
+* State is preserved during configuration changes
+
+---
+
+### Import Flow
+
+Import is a **temporary workflow**.
+
+* Always entered intentionally
+* Always exited explicitly
+* Never part of the bottom navigation stack
+
+---
+
+## Back Stack Management
+
+### Principles
+
+The navigation configuration enforces:
+
+* Single instance of each bottom tab
+* State restoration on tab reselection
+* No uncontrolled stack growth
+
+---
+
+### popUpTo Strategy
+
+When switching tabs:
+
+* The stack pops to the Library root
+* State is saved and restored
+* Duplicate destinations are avoided
+
+This ensures predictable back behavior.
+
+---
+
+## BottomNavigationBar
+
+### Purpose
+
+Provides **stable, always-available orientation**.
+
+---
+
+### Selection Logic
+
+* Selection is route-based
+* No heuristic matching
+* No partial matching
+
+This prevents accidental mis-highlighting.
+
+---
+
+### Navigation Behavior
+
+* launchSingleTop prevents duplication
+* restoreState preserves scroll and UI state
+* saveState ensures tab memory
+
+This matches modern Android navigation expectations.
+
+---
+
+## Settings Screen
+
+### Role
+
+Settings is intentionally minimal and boring.
+
+This is by design.
+
+It is a **configuration surface**, not an exploration space.
+
+---
+
+### Sectioning
+
+Settings are grouped into:
+
+* Reading
+* Data and Storage
+* About
+
+Each section is visually separated and semantically scoped.
+
+---
+
+### SettingsItem Design
+
+* Icon for quick recognition
+* Title for clarity
+* Optional subtitle for explanation
+* Chevron only when actionable
+
+No ambiguous affordances.
+
+---
+
+## Import Screen
+
+### Role
+
+The Import screen is a **controlled ingestion workflow**.
+
+It explicitly separates:
+
+* Book import
+* Note export policy
+
+---
+
+### Design Intent
+
+* Reduce accidental imports
+* Clarify supported formats
+* Set expectations early
+
+The note about export-only notes is intentionally explicit.
+
+---
+
+## ImportOption Component
+
+Each option:
+
+* Is visually large
+* Explains its behavior
+* Requires explicit tap
+
+There are no background scans or auto-imports.
+
+---
+
+## Deep Linking Considerations
+
+The current architecture supports future deep linking because:
+
+* Routes are stable and explicit
+* Parameters are primitive
+* Screens load data lazily from repositories
+
+Deep linking can be added without restructuring.
+
+---
+
+## Design Invariants Enforced by Navigation
+
+### Invariant 1: Orientation Is Always Clear
+
+* Bottom navigation anchors location
+* Back behavior is predictable
+* No hidden navigation paths
+
+---
+
+### Invariant 2: Focus Is Respected
+
+* Reader hides global navigation
+* Import isolates workflow
+* Detail screens reduce distractions
+
+---
+
+### Invariant 3: State Is Preserved
+
+* Tabs remember scroll position
+* Navigation avoids unnecessary recomposition
+* Data reloads are explicit
+
+---
+
+### Invariant 4: Features Are Decoupled
+
+* Screens do not navigate themselves arbitrarily
+* Navigation decisions are centralized
+* Features remain testable in isolation
+
+---
+
+## Relationship to the Overall System
+
+* Library introduces sources
+* Book Details contextualize sources
+* Reader generates highlights
+* Notes structure ideas
+* Navigation binds it all together
+
+Navigation does not create meaning.
+It preserves continuity so meaning can accumulate.
+
+---
+
+## Summary
+
+The navigation layer is the **silent backbone** of the application.
+
+When it works well:
+
+* Users never think about it
+* Movement feels obvious
+* Returning feels safe
+* Focus feels protected
+
+By enforcing clear hubs, predictable flows, and disciplined back stack management, this phase ensures that the system can scale in features **without collapsing cognitively**.
+
+This is the point where the app stops being a collection of screens
+and becomes a place users can inhabit.
