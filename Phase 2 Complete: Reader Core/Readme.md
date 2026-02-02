@@ -438,3 +438,475 @@ but it makes meaning easy to create.
 
 When implemented correctly, the reader screen disappears,
 and the knowledge graph quietly begins to grow.
+
+# EPUB Reader with Personal Knowledge Graph
+
+## Phase 2 Reader Core and Readium Integration Technical Documentation
+
+## Purpose and Scope
+
+This document explains the **Reader Core layer**, which integrates the **Readium Kotlin Toolkit** to provide EPUB rendering, navigation, selection, highlighting, progress tracking, and DRM awareness.
+
+This layer is the **execution engine of reading**.
+
+It sits below the UI and above persistence, translating EPUB mechanics into stable, observable state that the rest of the system can trust.
+
+This documentation is intended for platform engineers and developers responsible for reader correctness, performance, and integration.
+
+---
+
+## Architectural Role of the Reader Core
+
+### Position in the Stack
+
+* Below the Compose UI
+* Above repositories and database
+* Owns EPUB lifecycle and reading state
+* Acts as the single authority on “what is currently being read”
+
+The Reader Core does not store ideas and does not render UI.
+It governs **truth about reading**.
+
+---
+
+## High-Level Responsibilities
+
+The Reader Core layer is responsible for:
+
+* Opening and closing EPUB publications
+* Managing Readium `Publication` lifecycles
+* Tracking reading position via locators
+* Handling text selection and highlights
+* Coordinating reading sessions
+* Detecting and responding to DRM constraints
+* Supplying stable reading state to the UI
+
+It explicitly avoids:
+
+* UI decisions
+* Knowledge graph logic
+* Long-term persistence rules
+
+---
+
+## PublicationService
+
+### Purpose
+
+`PublicationService` is the **single gateway** for interacting with Readium publications.
+
+It ensures:
+
+* Publications are opened once per book
+* Resources are cleaned up correctly
+* DRM status is detected early
+
+---
+
+### Publication Lifecycle Management
+
+#### Opening a Publication
+
+When opening a publication:
+
+* File existence is validated
+* Readium `Streamer` opens the asset
+* DRM restrictions are detected
+* The publication is cached per book ID
+
+This avoids duplicate publication instances and resource leaks.
+
+---
+
+#### Closing a Publication
+
+Closing a publication:
+
+* Removes it from the in-memory cache
+* Releases all underlying resources
+
+This must always be called when reading ends.
+
+---
+
+### PublicationResult
+
+Results are explicitly modeled as:
+
+* `Success` with DRM status
+* `Error` with a user-facing message
+
+This avoids leaking Readium-specific failures upward.
+
+---
+
+## ReadingState
+
+### Purpose
+
+`ReadingState` represents the **current truth of a reading session**.
+
+It is immutable and emitted reactively.
+
+---
+
+### Included State
+
+* Book identity
+* Current locator
+* Progress percentage
+* Loading and error flags
+* Active text selection
+
+This state is consumed directly by the UI.
+
+---
+
+## TextSelection
+
+### Purpose
+
+Represents an active user text selection.
+
+### Included Data
+
+* Selected text
+* Readium locator
+* Optional screen rectangle
+
+This enables:
+
+* Accurate highlight creation
+* Contextual UI placement
+
+---
+
+## ReadingController
+
+### Purpose
+
+The `ReadingController` coordinates:
+
+* Publication access
+* Reading sessions
+* Highlight creation
+* Reading progress persistence
+
+It behaves like a ViewModel without owning UI concerns.
+
+---
+
+### Reading Session Start
+
+When a session starts:
+
+1. The publication is opened
+2. A reading session is created
+3. Last known progress is retrieved
+4. Initial reading state is emitted
+
+Failure at any stage is surfaced immediately.
+
+---
+
+### Location Updates
+
+Whenever navigation occurs:
+
+* Locator is updated
+* Progress percentage is updated
+* State is re-emitted
+
+No persistence happens here. This remains a pure state update.
+
+---
+
+### Text Selection Handling
+
+Selection events:
+
+* Update reading state
+* Trigger downstream UI affordances
+* Remain transient until acted upon
+
+Selections are never persisted directly.
+
+---
+
+### Highlight Creation Flow
+
+Creating a highlight:
+
+1. Reads current selection
+2. Extracts CFI fragment
+3. Persists highlight via repository
+4. Clears selection state
+
+This ensures a clean interaction loop.
+
+---
+
+### Ending a Reading Session
+
+Ending reading guarantees:
+
+* Session duration persistence
+* Progress persistence
+* Publication closure
+* State reset
+
+This is the most critical cleanup path in the system.
+
+---
+
+## Locator Utilities
+
+### Purpose
+
+`LocatorUtils` provides safe, minimal utilities for working with Readium locators.
+
+---
+
+### Locator to CFI
+
+* Extracts the first fragment
+* Used for database storage
+* Simple and deterministic
+
+---
+
+### CFI to Locator
+
+* Reconstructs a locator from stored data
+* Requires publication context
+* Simplified for MVP usage
+
+Production implementations must be more robust.
+
+---
+
+### Progress Calculation
+
+Progress is calculated using:
+
+* `totalProgression` when available
+* Fallback position-based estimation
+
+This ensures progress is always available, even when incomplete.
+
+---
+
+## Highlight Rendering Support
+
+### HighlightDecoration
+
+A UI-agnostic structure that maps:
+
+* Database highlights
+* Readium locators
+* Visual attributes
+
+This decouples persistence from rendering.
+
+---
+
+### HighlightDecorationService
+
+Responsibilities include:
+
+* Loading highlights for a book
+* Converting CFIs into locators
+* Preparing decorations for Readium
+
+This service bridges the database and the navigator.
+
+---
+
+## Text Extraction for Indexing
+
+### TextExtractionService
+
+### Purpose
+
+Extracts full readable text from EPUB files during import.
+
+This supports:
+
+* Full-text search
+* Cross-book discovery
+* Offline indexing
+
+---
+
+### Extraction Flow
+
+* Open EPUB with Streamer
+* Iterate reading order
+* Read and clean chapter content
+* Emit structured chapter text objects
+
+Extraction errors are isolated per chapter.
+
+---
+
+### HTML Cleaning Strategy
+
+* Strip tags
+* Remove entities
+* Normalize whitespace
+
+This produces search-friendly text without layout noise.
+
+---
+
+## DRM Detection and Handling
+
+### DrmHandler
+
+### Purpose
+
+Centralizes DRM interpretation and messaging.
+
+---
+
+### DRM Status Evaluation
+
+* Uses Readium restriction flags
+* Differentiates between:
+
+  * Fully restricted content
+  * Content with limited rights
+  * DRM-free content
+
+This enables feature gating without breaking reading.
+
+---
+
+### User Messaging
+
+DRM messages are:
+
+* Informative, not punitive
+* Feature-specific
+* Optional
+
+Reading is never blocked unless technically required.
+
+---
+
+## Reading Preferences
+
+### ReadingPreferences
+
+Encapsulates all user-controlled reading parameters:
+
+* Font size
+* Font family
+* Line height
+* Theme
+* Scroll mode
+
+Preferences are intentionally orthogonal to reading state.
+
+---
+
+### PreferencesManager
+
+### Responsibilities
+
+* Maintains reactive preference state
+* Enforces sane bounds
+* Applies updates immediately
+
+Persistence is deferred to production storage solutions.
+
+---
+
+## Integration Requirements
+
+### Readium Toolkit Dependencies
+
+The reader core depends on:
+
+* Readium Shared
+* Readium Streamer
+* Readium Navigator
+* Optional LCP support
+
+Correct version alignment is mandatory.
+
+---
+
+### Critical Setup Steps
+
+Implementers must ensure:
+
+* Readium initialization at app startup
+* Correct storage paths
+* Scoped storage compliance
+* Publication lifecycle management
+
+Failure here results in subtle, hard-to-debug errors.
+
+---
+
+## Known Limitations
+
+The current implementation intentionally simplifies:
+
+* CFI parsing and serialization
+* DRM handling depth
+* Text extraction threading
+* Locator reconstruction
+
+These are acceptable for Phase 2 and must be addressed before production.
+
+---
+
+## Design Invariants Enforced by the Reader Core
+
+### Invariant 1: One Publication per Book
+
+* Prevents resource leaks
+* Ensures consistent state
+
+---
+
+### Invariant 2: State Is Observable
+
+* All reading state flows outward
+* No hidden internal mutations
+
+---
+
+### Invariant 3: Persistence Is Explicit
+
+* No silent database writes
+* Progress and sessions are deliberate
+
+---
+
+### Invariant 4: DRM Is Respected
+
+* Features degrade gracefully
+* Reading remains primary
+
+---
+
+## Summary
+
+The Reader Core is the **mechanical heart** of the system.
+
+* It opens books
+* It tracks position
+* It enforces legality
+* It guarantees cleanup
+
+When this layer is correct:
+
+* The UI remains simple
+* The database remains honest
+* The knowledge graph remains trustworthy
+
+This is where reading becomes a reliable substrate
+upon which thinking can safely grow.
