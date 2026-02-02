@@ -483,3 +483,492 @@ It guarantees that:
 
 At this point, the app stops being just a reader
 and becomes a **knowledge instrument**.
+
+## Phase 5 Export and Polish
+
+### Markdown Export Engine
+
+### Refined and Finalized Technical Documentation
+
+---
+
+## Purpose and Scope
+
+Phase 5 completes the system by answering a fundamental durability question:
+
+What happens to the knowledge if the application no longer exists?
+
+The **Markdown Export Engine** ensures that all user-created knowledge remains:
+
+* Portable across platforms and tools
+* Human-readable without specialized software
+* Tool-agnostic and standards-based
+* Structurally faithful to the original knowledge graph
+
+This phase transforms the application from a closed reading environment into a **knowledge authoring and preservation system**.
+
+---
+
+## Design Goals
+
+The export system is governed by five non-negotiable principles:
+
+* Zero vendor lock-in
+* Full preservation of graph structure
+* Long-term readability and archival safety
+* Compatibility with widely used knowledge tools
+* Deterministic and repeatable output
+
+The exported material must remain useful decades into the future, independent of the app.
+
+---
+
+## Conceptual Model
+
+### What Is Being Exported
+
+The export output is not a flat collection of notes.
+It is a **serialized personal knowledge graph expressed in Markdown**.
+
+Each exported note preserves:
+
+* Its authored content
+* Its source and origin
+* Its contextual metadata
+* Its explicit relationships to other notes
+
+---
+
+### Knowledge Representation Strategy
+
+The system uses a layered representation model:
+
+1. YAML frontmatter for machine-readable metadata
+2. Markdown body for human-centric reading
+3. Wiki-style links for graph navigation
+4. Folder structure for semantic grouping
+
+Each layer serves a distinct audience, from automation tools to future readers.
+
+---
+
+## Export Boundaries
+
+The export engine supports three explicit scopes:
+
+* Single note export
+* Single book export
+* Entire library export
+
+Each scope is implemented independently to prevent accidental data loss, partial exports, or ambiguous behavior.
+
+---
+
+## MarkdownExportService
+
+### Responsibility
+
+The `MarkdownExportService` owns the full export pipeline.
+
+Its responsibilities include:
+
+* Retrieving data from repositories
+* Creating filesystem-safe directory structures
+* Generating deterministic filenames
+* Rendering Markdown and YAML content
+* Writing files atomically and safely
+
+It has no dependency on UI state or presentation logic.
+
+---
+
+### Threading Model
+
+All export operations run on the IO dispatcher.
+
+This guarantees:
+
+* No UI thread blocking
+* Safe interaction with the filesystem
+* Predictable behavior for large libraries
+
+---
+
+## Export Directory Structure
+
+### Root Export Directory
+
+Each export operation creates a uniquely timestamped root directory.
+
+This ensures:
+
+* No accidental overwrites
+* Clear historical exports
+* Safe repeated execution
+
+Example:
+
+```
+EPubReaderExport/2026-02-02_143012/
+```
+
+---
+
+### Book-Level Organization
+
+Notes are grouped under folders named after their source books.
+
+Each book directory contains:
+
+* `INDEX.md`
+* Individual note files
+
+This structure mirrors how readers mentally organize annotations.
+
+---
+
+### Standalone Notes
+
+Notes not associated with any book are placed in:
+
+```
+Standalone Notes/
+```
+
+This prevents orphaned ideas from being hidden or discarded.
+
+---
+
+## Filename Strategy
+
+### Deterministic Naming
+
+Each note filename includes:
+
+* Creation date
+* Internal note identifier
+* Sanitized title
+
+This ensures:
+
+* Stable backlinks across exports
+* Collision resistance
+* Natural chronological sorting
+
+Example:
+
+```
+2026-02-02_14_power-of-habit.md
+```
+
+---
+
+### Filename Sanitization
+
+The sanitization process removes:
+
+* Unsafe filesystem characters
+* Redundant whitespace
+* Excessively long titles
+
+This guarantees compatibility across operating systems.
+
+---
+
+## Markdown Content Structure
+
+All exported notes follow a single, enforced structure.
+
+Consistency is intentional and critical for tooling compatibility.
+
+---
+
+### YAML Frontmatter
+
+The YAML frontmatter captures structured metadata.
+
+Included fields:
+
+* title
+* created_at
+* modified_at
+* source_book
+* author
+* location_cfi
+* links
+* backlinks
+
+This metadata enables:
+
+* Graph reconstruction
+* Timeline analysis
+* Advanced search and filtering
+* External automation workflows
+
+---
+
+### Highlight Preservation
+
+If a note originates from a highlight:
+
+* The quoted text is preserved verbatim
+* Rendered as a Markdown blockquote
+* Attributed to the source book and author
+
+This maintains academic integrity and contextual accuracy.
+
+---
+
+### Note Body
+
+The note body is exported without transformation.
+
+No formatting, rewriting, or normalization is applied.
+
+The author’s original voice is preserved exactly.
+
+---
+
+### Internal Links
+
+Relationships are rendered using wiki-style links:
+
+```
+[[Note Title]]
+```
+
+This format is intentionally chosen for compatibility with:
+
+* Obsidian
+* Logseq
+* Roam Research
+* Foam
+* Most modern Markdown parsers
+
+---
+
+### Backlinks Section
+
+Backlinks are rendered explicitly within each note.
+
+This ensures:
+
+* Bidirectional graph traversal
+* Visibility in tools without backlink indexing
+* Clear idea lineage for human readers
+
+---
+
+## Index Files
+
+### Book Index
+
+Each book directory contains an `INDEX.md` file.
+
+This file includes:
+
+* Book metadata
+* Export timestamp
+* Chronologically ordered note links
+
+It functions as a table of contents.
+
+---
+
+### Master Index
+
+A `README.md` file is created at the root of the export.
+
+It documents:
+
+* Export contents
+* Usage instructions
+* Import guidance for other tools
+* Folder structure overview
+
+This file is written for humans, not parsers.
+
+---
+
+## ExportAllNotes Strategy
+
+When exporting the entire library:
+
+* Notes are grouped by book
+* Standalone notes are separated
+* A single master index is generated
+
+This supports partial imports, selective reuse, and long-term archival.
+
+---
+
+## Export Result Model
+
+### ExportResult
+
+The export service returns structured outcomes:
+
+* Success with directory and file details
+* NoContent when nothing exists to export
+* Error with a user-safe message
+
+Exceptions never leak into the UI layer.
+
+---
+
+## ExportViewModel
+
+### Responsibility
+
+The ViewModel acts as a bridge between:
+
+* UI intent
+* Long-running export operations
+* User feedback and state
+
+It contains no export logic.
+
+---
+
+### State Model
+
+The export lifecycle is explicitly modeled as:
+
+* Idle
+* Exporting
+* Success
+* Error
+
+This prevents ambiguous or misleading UI states.
+
+---
+
+### Progress Handling
+
+Progress reporting is intentionally coarse-grained.
+
+This decision is deliberate:
+
+* File counts vary widely
+* I/O progress is unreliable
+* Trust is preferred over false precision
+
+---
+
+## Export Dialog UI
+
+### ExportOptionsDialog
+
+The user must explicitly choose between:
+
+* Exporting the current book
+* Exporting the entire library
+
+There are no implicit defaults.
+
+---
+
+### ExportProgressDialog
+
+During export:
+
+* The dialog is modal
+* Cancellation is disabled
+* Feedback is minimal and calm
+
+This prevents partial or corrupted exports.
+
+---
+
+### ExportSuccessDialog
+
+On success:
+
+* File count is displayed
+* The export directory path is shown
+* A direct “Open Folder” action is available
+
+This reinforces user ownership of their data.
+
+---
+
+### ExportErrorDialog
+
+Error messages are:
+
+* Plain-language
+* Non-technical
+* Recoverable
+
+No internal stack traces are exposed.
+
+---
+
+## Invariants Enforced by Export
+
+### Invariant 1: No Data Loss
+
+Every note in the system is exportable.
+
+No hidden or implicit states exist.
+
+---
+
+### Invariant 2: Graph Integrity
+
+Links and backlinks are preserved explicitly.
+
+The knowledge graph survives outside the application.
+
+---
+
+### Invariant 3: Tool Independence
+
+Only open, widely supported formats are used.
+
+Markdown and YAML are intentional choices.
+
+---
+
+### Invariant 4: Human Readability
+
+Any exported file can be opened and understood without tooling.
+
+---
+
+### Invariant 5: Repeatability
+
+Exports are deterministic and repeatable.
+
+Multiple exports produce equivalent structures.
+
+---
+
+## Relationship to the Overall System
+
+This phase completes the full lifecycle:
+
+* Library ingests sources
+* Reader extracts meaning
+* Notes refine understanding
+* Links form a graph
+* Export preserves the graph
+
+Without export, the system would remain incomplete.
+
+---
+
+## Final Summary
+
+The Markdown Export Engine represents the **ethical backbone** of the application.
+
+It guarantees that:
+
+* Knowledge is never trapped
+* Ideas outlive software
+* Structure survives migration
+* Ownership remains with the user
+
+At this point, the application ceases to be merely an EPUB reader
+and becomes a **durable knowledge instrument**.
+
