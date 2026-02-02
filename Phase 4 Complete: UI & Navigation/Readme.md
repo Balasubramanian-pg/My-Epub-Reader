@@ -400,3 +400,368 @@ By separating **source management** from **idea navigation**, this screen ensure
 This is not a settings page.
 It is a reflection surface for intellectual investment.
 
+# EPUB Reader with Personal Knowledge Graph
+
+## Phase 4 Library Screen Technical Documentation
+
+## Purpose and Scope
+
+This document explains the **Phase 4 Library Screen**, which functions as the **primary entry point into the system**.
+
+This is not a file browser.
+This is not a database table.
+
+The Library Screen is a **curated, narrative overview of intellectual territory**. It answers, at a glance:
+
+* What am I reading?
+* What have I invested time in?
+* What sources are producing ideas?
+* Where should I go next?
+
+This documentation is intended for engineers and designers working on **discovery, navigation, and long-term reading continuity**.
+
+---
+
+## Architectural Role of the Library Screen
+
+### Position in the Stack
+
+* Consumes enriched `BookWithMetadata` models
+* Aggregates reading progress, tags, ratings, and analytics
+* Does not manipulate notes or links directly
+* Acts as the **orientation layer** for the entire application
+
+Every other screen is entered from here, implicitly or explicitly.
+
+---
+
+## Conceptual Model
+
+The Library Screen treats books as:
+
+* **Sources of thought**
+* **Ongoing commitments**
+* **Completed investments**
+* **Clusters of future ideas**
+
+The UI is optimized for **recognition over recall**.
+
+---
+
+## LibraryViewModel
+
+### Purpose
+
+`LibraryViewModel` is the **curation engine** of the library.
+
+It is responsible for:
+
+* Loading all books with enriched metadata
+* Deriving carousel groupings
+* Surfacing reading analytics
+* Managing destructive actions safely
+* Maintaining UI loading and error state
+
+---
+
+### Core State Streams
+
+#### All Books
+
+* Canonical stream of all books
+* Includes progress, tags, highlights, notes
+* Acts as the source for all derived views
+
+No carousel fetches independently.
+
+---
+
+#### Carousel Streams
+
+Each carousel is a **derived semantic view**, not a separate dataset.
+
+##### Continue Reading
+
+* Books with partial progress
+* Sorted by most recently read
+* Reinforces continuity and momentum
+
+##### Recently Added
+
+* Sorted by import timestamp
+* Encourages exploration of new material
+
+##### Top Rated
+
+* Books rated highly by the user
+* Represents retrospective value judgment
+
+##### Books by Tag
+
+* Grouped by user-defined tags
+* Requires at least two books per tag
+* Avoids visual noise from singleton categories
+
+---
+
+#### Reading Analytics
+
+The weekly minutes read metric:
+
+* Provides lightweight feedback
+* Reinforces reading as a habit
+* Avoids gamification excess
+
+It is informative, not competitive.
+
+---
+
+#### UI State
+
+Tracks:
+
+* Loading state
+* Import dialog visibility
+* Delete confirmation state
+* Error messaging
+
+All transient concerns are isolated here.
+
+---
+
+## LibraryScreen
+
+### Role
+
+`LibraryScreen` is the **Netflix-style browsing interface** for books.
+
+Its design goals are:
+
+* Fast visual scanning
+* Low-friction navigation
+* Progressive disclosure of detail
+* Strong empty-state guidance
+
+---
+
+### Screen States
+
+#### Initial Loading
+
+* Full-screen indicator
+* Only shown when no cached data exists
+
+#### Empty Library
+
+* Explicit explanation
+* Clear call to action
+* No dead ends
+
+#### Populated Library
+
+* Vertical stack of horizontal carousels
+* Each carousel answers a different cognitive question
+
+---
+
+## LibraryTopBar
+
+### Purpose
+
+Provides **global context and lightweight analytics**.
+
+---
+
+### Elements
+
+* Screen title
+* Weekly reading badge
+* Import affordance
+
+The analytics badge is intentionally subtle.
+It informs without pressuring.
+
+---
+
+## BookCarousel
+
+### Conceptual Role
+
+Each carousel is a **lens**, not a category.
+
+Carousels answer questions like:
+
+* What should I continue?
+* What’s new?
+* What did I value?
+* How do I group my sources?
+
+---
+
+### Design Characteristics
+
+* Horizontal scrolling
+* Fixed card size
+* Stable ordering
+* Clear section headers
+
+This mirrors proven discovery patterns while preserving meaning.
+
+---
+
+## BookCard
+
+### Purpose
+
+The BookCard is the **atomic unit of library browsing**.
+
+It must communicate maximum signal in minimal space.
+
+---
+
+### Visual Hierarchy
+
+1. Cover image
+2. Progress indicator
+3. Title
+4. Author
+5. Optional rating
+6. Optional progress text
+7. Badges
+
+Each element earns its place.
+
+---
+
+### Progress Representation
+
+Progress is shown in two ways:
+
+* Linear overlay on the cover
+* Percentage text below
+
+Only displayed when meaningful.
+
+---
+
+### Badges
+
+Badges represent **idea density**, not usage:
+
+* Highlight count
+* Note count
+
+They answer:
+“Has this book produced thought?”
+
+---
+
+## EmptyLibraryState
+
+### Purpose
+
+The empty state is a **first impression**.
+
+It must:
+
+* Explain what the library is
+* Remove ambiguity
+* Invite immediate action
+
+---
+
+### Design Intent
+
+* Friendly, not apologetic
+* Clear explanation
+* Single primary action
+
+Empty is treated as a beginning, not a failure.
+
+---
+
+## Destructive Actions
+
+### DeleteBookDialog
+
+Deletion is explained in plain language.
+
+The dialog explicitly lists:
+
+* Book file deletion
+* Highlight deletion
+* Highlight-linked note deletion
+* Reading progress removal
+* Preservation of standalone notes
+
+This reinforces trust and predictability.
+
+---
+
+## Design Invariants Enforced by This Screen
+
+### Invariant 1: The Library Is Curated, Not Flat
+
+* No raw lists
+* No overwhelming grids
+* Meaningful grouping only
+
+---
+
+### Invariant 2: Progress Is Respected
+
+* Continue Reading is prioritized
+* Recent engagement matters
+* Abandoned books fade naturally
+
+---
+
+### Invariant 3: Value Is Visible
+
+* Ratings surface judgment
+* Highlights and notes surface insight
+* Badges signal depth
+
+---
+
+### Invariant 4: Actions Are Intentional
+
+* Import is explicit
+* Delete is gated
+* Navigation is deliberate
+
+---
+
+### Invariant 5: Discovery Is Gentle
+
+* Tags suggest organization
+* Carousels invite exploration
+* No algorithmic overreach
+
+---
+
+## Relationship to Other Screens
+
+* **Library Screen** answers “Where am I?”
+* **Book Details Screen** answers “What is this source?”
+* **Reader Screen** answers “What am I reading right now?”
+* **Notes Screen** answers “What ideas live here?”
+
+The Library Screen is the **map**, not the territory.
+
+---
+
+## Summary
+
+The Library Screen is the **front door of the system**.
+
+It transforms a folder of EPUB files into:
+
+* A reading history
+* A set of commitments
+* A growing intellectual landscape
+
+By using curated carousels, meaningful metadata, and respectful analytics, this screen ensures users always know **where they are**, **what they’ve done**, and **what they might do next**.
+
+It does not shout.
+It quietly orients.
