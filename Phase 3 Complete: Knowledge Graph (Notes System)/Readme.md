@@ -331,3 +331,460 @@ and structure into memory.
 By the time a graph visualization exists,
 the graph itself will already be correct.
 
+# EPUB Reader with Personal Knowledge Graph
+
+## Phase 3 Knowledge Graph Notes System Technical Documentation
+
+## Purpose and Scope
+
+This document explains the **Phase 3 Knowledge Graph Notes System**, which brings together **notes, links, backlinks, discovery, and navigation** into a cohesive cognitive interface.
+
+This layer is where the system fully transitions from “note-taking” to **graph-based thinking**.
+
+It provides:
+
+* Notes as first-class entities
+* Explicit bidirectional linking
+* Backlinks as a memory mechanism
+* Related idea discovery via FTS
+* Cross-book navigation and source tracing
+
+This documentation is intended for engineers and designers working on the **core thinking experience** of the application.
+
+---
+
+## Architectural Role of the Knowledge Graph UI
+
+### Position in the Stack
+
+* Consumes `NoteWithLinks` domain models
+* Delegates mutations to `NoteRepository`
+* Reflects graph structure without inferring meaning
+* Acts as a **graph navigator**, not a graph editor
+
+The UI never invents structure.
+It reveals structure that the user has created.
+
+---
+
+## High-Level Responsibilities
+
+This layer is responsible for:
+
+* Browsing the full note graph
+* Filtering and searching notes
+* Selecting and inspecting a note’s neighborhood
+* Creating, removing, and inspecting links
+* Visualizing backlinks as memory
+* Bridging notes back to source material
+
+It explicitly avoids:
+
+* Automatic linking
+* Implicit graph expansion
+* Background graph mutation
+
+---
+
+## NotesViewModel
+
+### Purpose
+
+`NotesViewModel` is the **knowledge graph orchestrator**.
+
+It coordinates:
+
+* Full graph loading
+* Search and filter logic
+* Selection and detail loading
+* Link creation and removal
+* Related note discovery
+
+It is the only place where graph-wide state is assembled.
+
+---
+
+### Core State Streams
+
+#### All Notes
+
+* Emits every note with its full graph context
+* Includes outgoing links and backlinks
+* Acts as the canonical in-memory graph snapshot
+
+---
+
+#### Selected Note
+
+* Represents the currently focused node
+* Drives the detail pane
+* Always includes full neighborhood context
+
+---
+
+#### UI State
+
+Encapsulates transient UI concerns:
+
+* Dialog visibility
+* Related note suggestions
+* Deletion targets
+* Error states
+
+This keeps Compose logic predictable.
+
+---
+
+### Search and Filtering
+
+Search and filter logic is composed reactively using:
+
+* All notes
+* Search query
+* Filter mode
+
+Filtering supports:
+
+* All notes
+* Standalone ideas
+* Notes with links
+* Notes created from highlights
+
+This enables multiple cognitive entry points into the graph.
+
+---
+
+## Graph Mutations
+
+### Standalone Note Creation
+
+* Initiated via UI dialog
+* Delegated to repository
+* Immediately reflected in graph state
+
+This supports thinking-first workflows.
+
+---
+
+### Note Updates
+
+* Edits are explicit
+* Modified timestamps are updated
+* Detail pane refreshes automatically
+
+---
+
+### Note Deletion
+
+Deletion guarantees:
+
+* Explicit user confirmation
+* Automatic link cleanup via cascade
+* Safe graph re-stabilization
+
+The UI never deletes silently.
+
+---
+
+### Linking Notes (Core Operation)
+
+This is the most critical mutation.
+
+When linking notes:
+
+* Both notes must exist
+* Self-links are forbidden upstream
+* Links are explicit and directional
+* Backlinks appear automatically
+
+The UI reflects structure, but the repository enforces invariants.
+
+---
+
+### Unlinking Notes
+
+Unlinking removes a single edge.
+
+* No cascading deletions
+* Backlinks update automatically
+* Graph remains consistent
+
+---
+
+## NotesScreen
+
+### Role
+
+`NotesScreen` is the **main graph workspace**.
+
+It provides:
+
+* A two-pane layout
+* Global search and filtering
+* Direct access to creation and linking
+
+---
+
+### Two-Pane Design
+
+#### Left Pane: Notes List
+
+* Displays filtered notes
+* Shows link counts and origin chips
+* Highlights current selection
+
+This pane answers:
+“What ideas do I have?”
+
+---
+
+#### Right Pane: Note Detail
+
+* Displays full note content
+* Shows links, backlinks, and suggestions
+* Enables editing, linking, and deletion
+
+This pane answers:
+“How does this idea relate to others?”
+
+---
+
+## NotesTopBar
+
+### Purpose
+
+Provides **graph-wide orientation and control**.
+
+Features:
+
+* Live search
+* Filter dropdown
+* Clear, visible state
+
+Search is always scoped to the entire graph.
+
+---
+
+## NotesListPane
+
+### Empty State
+
+When no notes exist, the UI:
+
+* Explains what notes are
+* Encourages first creation
+* Avoids blank or confusing screens
+
+---
+
+### NoteListItem
+
+Each list item surfaces:
+
+* Title and body preview
+* Link count
+* Origin chip:
+
+  * Standalone
+  * From highlight
+  * From book
+* Creation date
+
+This allows rapid scanning of the idea space.
+
+---
+
+## NoteDetailPane
+
+### Conceptual Role
+
+This is the **knowledge graph navigator**.
+
+It shows a note **in context**, not in isolation.
+
+---
+
+### Editing Mode
+
+* Explicit toggle
+* Draft state is local
+* Save and cancel are clear
+
+Edits never occur implicitly.
+
+---
+
+### Source Context
+
+If a note originates from a highlight:
+
+* Highlight text is shown
+* Book metadata is displayed
+* Jump-to-passage is available
+
+This preserves intellectual provenance.
+
+---
+
+### Linked Notes Section
+
+Shows outgoing links.
+
+* Represents intentional references
+* Allows unlinking
+* Enables forward navigation
+
+---
+
+### Backlinks Section (Memory Mechanism)
+
+Shows incoming links.
+
+This is critical.
+
+Backlinks answer:
+“Where has this idea been used?”
+
+They are:
+
+* Automatic
+* Non-editable
+* Central to long-term recall
+
+---
+
+### Related Notes (FTS-Based Suggestions)
+
+These are **suggestions, not structure**.
+
+* Based on textual similarity
+* Do not imply meaning
+* Require explicit linking to persist
+
+This preserves trust in the graph.
+
+---
+
+### Metadata
+
+Displays:
+
+* Creation date
+* Modification date
+* Stable identifier
+
+This supports auditing, export, and debugging.
+
+---
+
+## Graph Navigation Components
+
+### GraphSection
+
+Used for:
+
+* Linked notes
+* Backlinks
+
+Provides:
+
+* Count visibility
+* Clear iconography
+* Uniform navigation affordances
+
+---
+
+### LinkedNoteCard
+
+A minimal representation of a neighboring node.
+
+Supports:
+
+* Click-through navigation
+* Optional unlinking
+* Preview-level context
+
+---
+
+### RelatedNotesSection
+
+Visually distinguished from explicit links.
+
+This reinforces the conceptual boundary between:
+
+* Suggestions
+* Commitments
+
+---
+
+## SourceCard
+
+### Purpose
+
+Bridges the knowledge graph back to reading.
+
+Provides:
+
+* Highlight context
+* Book identity
+* Direct navigation to the source passage
+
+This closes the loop between reading and thinking.
+
+---
+
+## Design Invariants Enforced by This Layer
+
+### Invariant 1: Notes Are First-Class
+
+* Standalone creation
+* Independent browsing
+* Equal visual weight
+
+---
+
+### Invariant 2: Links Are Intentional
+
+* Explicit user action
+* No automation
+* Clear affordances
+
+---
+
+### Invariant 3: Backlinks Are Non-Negotiable
+
+* Always visible
+* Always accurate
+* Never editable directly
+
+---
+
+### Invariant 4: Discovery Is Separate from Structure
+
+* FTS suggests
+* User decides
+* Graph remembers
+
+---
+
+### Invariant 5: Sources Are Preserved
+
+* Highlights remain visible
+* Books remain navigable
+* Context is never lost
+
+---
+
+## Summary
+
+This screen is the **center of gravity** for the entire system.
+
+* The reader produces ideas
+* The notes system structures them
+* The graph preserves meaning over time
+
+By making links explicit and backlinks unavoidable,
+this layer turns notes into memory and memory into insight.
+
+When users return months later,
+this is the screen that will remember for them.
