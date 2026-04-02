@@ -1,14 +1,12 @@
 # 📱 EPUB READER - ASSEMBLY CHECKLIST
 ## From Files to Working App in Your Hands
 
----
 
 ## 🎯 Prerequisites
 - [ ] Android Studio installed (Hedgehog 2023.1.1 or newer)
 - [ ] Java JDK 17 or higher
 - [ ] Android device with Android 13+ OR Android emulator
 
----
 
 ## 📁 STEP 1: CREATE PROJECT (5 minutes)
 
@@ -24,7 +22,6 @@
 5. [ ] Click "Finish"
 6. [ ] Wait for initial Gradle sync to complete
 
----
 
 ## ⚙️ STEP 2: CONFIGURE BUILD FILES (10 minutes)
 
@@ -61,7 +58,6 @@ maven { url = uri("https://jitpack.io") }
 ```
 - [ ] Save and sync again
 
----
 
 ## 📂 STEP 3: CREATE FOLDER STRUCTURE (5 minutes)
 
@@ -99,7 +95,6 @@ com.epreader/
 └── di/
 ```
 
----
 
 ## 📄 STEP 4: COPY FILES (15 minutes)
 
@@ -144,7 +139,6 @@ For each file below:
 - [ ] Copy `export_engine.kt` → Create `export/ExportEngine.kt`
   - Package line: `package com.epreader.export`
 
----
 
 ## 🔧 STEP 5: CREATE ESSENTIAL FILES (10 minutes)
 
@@ -209,7 +203,6 @@ fun EPubReaderTheme(
 ```
 - [ ] Save
 
----
 
 ## 📋 STEP 6: UPDATE MANIFEST (2 minutes)
 
@@ -223,7 +216,6 @@ fun EPubReaderTheme(
 ```
 - [ ] Save
 
----
 
 ## 🔨 STEP 7: BUILD PROJECT (5 minutes)
 
@@ -240,7 +232,6 @@ If you see errors, check:
 - [ ] All files saved
 - [ ] Gradle sync completed successfully
 
----
 
 ## 🚀 STEP 8: RUN THE APP (5 minutes)
 
@@ -263,7 +254,6 @@ If you see errors, check:
 - [ ] Grant USB debugging permission on device
 - [ ] Wait for app to launch
 
----
 
 ## ✅ STEP 9: VERIFY IT WORKS
 
@@ -279,7 +269,6 @@ When the app launches, you should see:
 
 **🎉 CONGRATULATIONS! Your app is running!**
 
----
 
 ## 🎯 WHAT WORKS RIGHT NOW
 
@@ -296,7 +285,6 @@ When the app launches, you should see:
 - Reading (no books to read)
 - Actual note creation from highlights (needs books first)
 
----
 
 ## 🔍 TROUBLESHOOTING
 
@@ -327,7 +315,6 @@ When the app launches, you should see:
 - [ ] Clean project: Build → Clean Project
 - [ ] Rebuild: Build → Rebuild Project
 
----
 
 ## 📸 SCREENSHOT YOUR SUCCESS!
 
@@ -336,7 +323,6 @@ When your app runs successfully:
 - [ ] Take a screenshot of the Notes tab
 - [ ] You've successfully built a complex Android app!
 
----
 
 ## 🎓 NEXT STEPS
 
@@ -350,7 +336,6 @@ Would you like me to create:
 - [ ] Testing guide with sample EPUBs
 - [ ] Deployment guide (how to install on your device permanently)
 
----
 
 ## ⏱️ TOTAL TIME ESTIMATE
 - Project setup: 5 min
@@ -364,7 +349,6 @@ Would you like me to create:
 
 **TOTAL: ~60 minutes** to go from files to working app!
 
----
 
 ## 🆘 NEED HELP?
 
