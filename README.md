@@ -13,7 +13,6 @@ At its core, the application combines:
 
 The system is intentionally designed so that **knowledge never becomes trapped inside the application**. Every idea, relationship, and annotation can be exported in open formats and reconstructed elsewhere.
 
----
 
 ## Core Philosophy
 
@@ -27,7 +26,6 @@ This project is guided by a small set of uncompromising principles:
 
 The app is not just a reader. It is a **knowledge instrument**.
 
----
 
 ## High-Level Architecture
 
@@ -41,7 +39,6 @@ The application is organized into clear, layered responsibilities:
 
 Each layer is isolated, testable, and replaceable.
 
----
 
 ## Technology Stack
 
@@ -54,7 +51,6 @@ Each layer is isolated, testable, and replaceable.
 * **Async**: Kotlin Coroutines + Flow
 * **Export Format**: Markdown + YAML Frontmatter
 
----
 
 ## Feature Breakdown by Phase
 
@@ -68,7 +64,6 @@ Each layer is isolated, testable, and replaceable.
 
 Result: A durable and queryable personal library.
 
----
 
 ### Phase 2 – Reader Core
 
@@ -80,7 +75,6 @@ Result: A durable and queryable personal library.
 
 Result: A serious reading experience, not a file viewer.
 
----
 
 ### Phase 3 – Notes & Knowledge Graph
 
@@ -93,7 +87,6 @@ Result: A serious reading experience, not a file viewer.
 
 Result: A growing personal knowledge graph.
 
----
 
 ### Phase 4 – UI, Navigation & Discovery
 
@@ -106,7 +99,6 @@ Result: A growing personal knowledge graph.
 
 Result: A calm, scalable, and discoverable interface.
 
----
 
 ### Phase 5 – Export & Polish
 
@@ -119,7 +111,6 @@ Result: A calm, scalable, and discoverable interface.
 
 Result: Knowledge that survives the app.
 
----
 
 ## Knowledge Model
 
@@ -136,7 +127,6 @@ They can:
 
 Notes are never deleted implicitly.
 
----
 
 ### Links
 
@@ -147,7 +137,6 @@ Notes are never deleted implicitly.
 
 This avoids accidental or opaque graph construction.
 
----
 
 ### Backlinks
 
@@ -160,7 +149,6 @@ Every note knows:
 
 This creates memory and rediscovery.
 
----
 
 ## Export System
 
@@ -170,7 +158,6 @@ If the app disappears, the knowledge must not.
 
 Export is treated as a **first-class system**, not an afterthought.
 
----
 
 ### Export Scopes
 
@@ -180,7 +167,6 @@ Export is treated as a **first-class system**, not an afterthought.
 
 Each scope is implemented independently.
 
----
 
 ### Export Format
 
@@ -194,7 +180,6 @@ Each note is exported as a standalone Markdown file containing:
 
 The format is compatible with Obsidian, Logseq, Roam Research, and plain Markdown readers.
 
----
 
 ### Folder Structure
 
@@ -211,7 +196,6 @@ EPubReaderExport/
     └── ...
 ```
 
----
 
 ## UI Philosophy
 
@@ -223,7 +207,6 @@ EPubReaderExport/
 
 The UI is designed to support **thinking**, not consumption.
 
----
 
 ## What This Project Is Not
 
@@ -234,7 +217,6 @@ The UI is designed to support **thinking**, not consumption.
 
 This is a personal system.
 
----
 
 ## Build & Run
 
@@ -243,7 +225,6 @@ This is a personal system.
 3. Ensure required permissions for storage access
 4. Build and run on Android 10+
 
----
 
 ## Key Dependencies
 
@@ -253,7 +234,6 @@ This is a personal system.
 * Coil Compose
 * Kotlin Coroutines
 
----
 
 ## Long-Term Vision
 
@@ -267,7 +247,6 @@ It favors:
 
 It is designed to still make sense years from now.
 
----
 
 ## Final Note
 
