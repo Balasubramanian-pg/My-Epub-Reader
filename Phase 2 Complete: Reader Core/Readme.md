@@ -19,7 +19,6 @@ It translates the conceptual model into lived interaction by combining:
 
 This documentation is intended for UI engineers, platform engineers, and anyone extending the reader experience.
 
----
 
 ## Architectural Role of the Reader UI Layer
 
@@ -32,7 +31,6 @@ This documentation is intended for UI engineers, platform engineers, and anyone 
 The reader UI is **thin by design**.
 It reacts, it orchestrates, it never decides meaning.
 
----
 
 ## High-Level Responsibilities
 
@@ -52,7 +50,6 @@ It is explicitly not responsible for:
 * Search indexing
 * Progress storage rules
 
----
 
 ## ReaderViewModel
 
@@ -67,7 +64,6 @@ The `ReaderViewModel` acts as the **interaction conductor** between:
 
 It is lifecycle-aware and session-aware.
 
----
 
 ### State Streams
 
@@ -90,7 +86,6 @@ The ViewModel exposes three primary reactive streams:
 
 This separation prevents UI noise from polluting domain state.
 
----
 
 ### Book Lifecycle
 
@@ -102,7 +97,6 @@ This separation prevents UI noise from polluting domain state.
 
 Failures are surfaced immediately to the UI.
 
----
 
 #### Closing a Book
 
@@ -112,7 +106,6 @@ Failures are surfaced immediately to the UI.
 
 This guarantees session closure even on abrupt exits.
 
----
 
 ## ReaderUiState
 
@@ -130,7 +123,6 @@ Encapsulates **ephemeral UI concerns** that should not persist.
 
 This keeps Compose recompositions predictable and explicit.
 
----
 
 ## ReaderScreen Composable
 
@@ -142,7 +134,6 @@ The top-level screen that:
 * Manages lifecycle hooks
 * Composes all reader subcomponents
 
----
 
 ### Lifecycle Integration
 
@@ -157,7 +148,6 @@ The top-level screen that:
 
 This prevents dangling reading sessions.
 
----
 
 ## Visual Structure
 
@@ -171,7 +161,6 @@ Displays one of three states:
 
 This avoids partially rendered or ambiguous states.
 
----
 
 ### Overlay Controls
 
@@ -185,7 +174,6 @@ Controls are intentionally **ephemeral and hidden by default**.
 
 Used for orientation, not distraction.
 
----
 
 #### Bottom Controls
 
@@ -194,7 +182,6 @@ Used for orientation, not distraction.
 
 Preferences apply immediately and persist across sessions.
 
----
 
 ### Selection Menu
 
@@ -210,7 +197,6 @@ Provides:
 
 This prevents accidental highlights.
 
----
 
 ### Note Creation Dialog
 
@@ -224,7 +210,6 @@ Design intent:
 
 The dialog always shows the highlight context.
 
----
 
 ## ReaderContent Composable
 
@@ -232,7 +217,6 @@ The dialog always shows the highlight context.
 
 Hosts the actual EPUB rendering surface.
 
----
 
 ### Theme Application
 
@@ -244,7 +228,6 @@ Background color adapts based on reading theme:
 
 This improves readability and reduces cognitive fatigue.
 
----
 
 ### Readium Integration Placeholder
 
@@ -257,7 +240,6 @@ In production:
 
 The UI is designed to remain stable when the navigator is swapped.
 
----
 
 ## UI Components
 
@@ -267,7 +249,6 @@ The UI is designed to remain stable when the navigator is swapped.
 * Avoids empty screens
 * Reinforces system responsiveness
 
----
 
 ### ErrorDisplay
 
@@ -275,7 +256,6 @@ The UI is designed to remain stable when the navigator is swapped.
 * Provides retry action
 * Prevents silent failures
 
----
 
 ### TopControls
 
@@ -283,7 +263,6 @@ The UI is designed to remain stable when the navigator is swapped.
 * Progress is numeric and visual
 * Navigation is explicit
 
----
 
 ### BottomControls
 
@@ -291,7 +270,6 @@ The UI is designed to remain stable when the navigator is swapped.
 * Theme toggle cycles predictably
 * No hidden settings screens required
 
----
 
 ### SelectionMenu
 
@@ -301,7 +279,6 @@ The UI is designed to remain stable when the navigator is swapped.
 
 This reduces accidental actions and ambiguity.
 
----
 
 ### HighlightColorButton
 
@@ -309,7 +286,6 @@ This reduces accidental actions and ambiguity.
 * Color communicates meaning instantly
 * Labels reduce guesswork
 
----
 
 ### NoteCreationDialog
 
@@ -326,7 +302,6 @@ The dialog enforces:
 
 This preserves note quality without being heavy-handed.
 
----
 
 ## Interaction Flow Summary
 
@@ -340,7 +315,6 @@ This preserves note quality without being heavy-handed.
 
 This flow minimizes context switching.
 
----
 
 ### Control Flow
 
@@ -350,7 +324,6 @@ This flow minimizes context switching.
 
 The UI never fights the reader.
 
----
 
 ## Integration Notes for Readium (Production)
 
@@ -361,7 +334,6 @@ The UI never fights the reader.
 * Use `FragmentContainerView`
 * Manage fragment lifecycle explicitly
 
----
 
 #### Location Tracking
 
@@ -369,7 +341,6 @@ The UI never fights the reader.
 * Calculate progress consistently
 * Forward updates to ViewModel
 
----
 
 #### Text Selection Handling
 
@@ -377,7 +348,6 @@ The UI never fights the reader.
 * Capture selected text and locator
 * Trigger selection menu
 
----
 
 #### Highlight Rendering
 
@@ -385,7 +355,6 @@ The UI never fights the reader.
 * Map stored highlights to visual overlays
 * Keep rendering idempotent
 
----
 
 #### Locator Persistence
 
@@ -393,7 +362,6 @@ The UI never fights the reader.
 * Avoid lossy position formats
 * Enable precise navigation and recovery
 
----
 
 ## Design Invariants Enforced by the UI
 
@@ -402,28 +370,24 @@ The UI never fights the reader.
 * UI defaults to content
 * Controls are hidden unless requested
 
----
 
 ### Invariant 2: Thought Is Immediate
 
 * Notes can be created at the moment of insight
 * No navigation required to capture ideas
 
----
 
 ### Invariant 3: Context Is Preserved
 
 * Highlights are always visible during note creation
 * Notes never lose their grounding
 
----
 
 ### Invariant 4: Preferences Are Lightweight
 
 * No settings screen required
 * Adjustments are reversible and instant
 
----
 
 ## Summary
 
@@ -453,7 +417,6 @@ It sits below the UI and above persistence, translating EPUB mechanics into stab
 
 This documentation is intended for platform engineers and developers responsible for reader correctness, performance, and integration.
 
----
 
 ## Architectural Role of the Reader Core
 
@@ -467,7 +430,6 @@ This documentation is intended for platform engineers and developers responsible
 The Reader Core does not store ideas and does not render UI.
 It governs **truth about reading**.
 
----
 
 ## High-Level Responsibilities
 
@@ -487,7 +449,6 @@ It explicitly avoids:
 * Knowledge graph logic
 * Long-term persistence rules
 
----
 
 ## PublicationService
 
@@ -501,7 +462,6 @@ It ensures:
 * Resources are cleaned up correctly
 * DRM status is detected early
 
----
 
 ### Publication Lifecycle Management
 
@@ -516,7 +476,6 @@ When opening a publication:
 
 This avoids duplicate publication instances and resource leaks.
 
----
 
 #### Closing a Publication
 
@@ -527,7 +486,6 @@ Closing a publication:
 
 This must always be called when reading ends.
 
----
 
 ### PublicationResult
 
@@ -538,7 +496,6 @@ Results are explicitly modeled as:
 
 This avoids leaking Readium-specific failures upward.
 
----
 
 ## ReadingState
 
@@ -548,7 +505,6 @@ This avoids leaking Readium-specific failures upward.
 
 It is immutable and emitted reactively.
 
----
 
 ### Included State
 
@@ -560,7 +516,6 @@ It is immutable and emitted reactively.
 
 This state is consumed directly by the UI.
 
----
 
 ## TextSelection
 
@@ -579,7 +534,6 @@ This enables:
 * Accurate highlight creation
 * Contextual UI placement
 
----
 
 ## ReadingController
 
@@ -594,7 +548,6 @@ The `ReadingController` coordinates:
 
 It behaves like a ViewModel without owning UI concerns.
 
----
 
 ### Reading Session Start
 
@@ -607,7 +560,6 @@ When a session starts:
 
 Failure at any stage is surfaced immediately.
 
----
 
 ### Location Updates
 
@@ -619,7 +571,6 @@ Whenever navigation occurs:
 
 No persistence happens here. This remains a pure state update.
 
----
 
 ### Text Selection Handling
 
@@ -631,7 +582,6 @@ Selection events:
 
 Selections are never persisted directly.
 
----
 
 ### Highlight Creation Flow
 
@@ -644,7 +594,6 @@ Creating a highlight:
 
 This ensures a clean interaction loop.
 
----
 
 ### Ending a Reading Session
 
@@ -657,7 +606,6 @@ Ending reading guarantees:
 
 This is the most critical cleanup path in the system.
 
----
 
 ## Locator Utilities
 
@@ -665,7 +613,6 @@ This is the most critical cleanup path in the system.
 
 `LocatorUtils` provides safe, minimal utilities for working with Readium locators.
 
----
 
 ### Locator to CFI
 
@@ -673,7 +620,6 @@ This is the most critical cleanup path in the system.
 * Used for database storage
 * Simple and deterministic
 
----
 
 ### CFI to Locator
 
@@ -683,7 +629,6 @@ This is the most critical cleanup path in the system.
 
 Production implementations must be more robust.
 
----
 
 ### Progress Calculation
 
@@ -694,7 +639,6 @@ Progress is calculated using:
 
 This ensures progress is always available, even when incomplete.
 
----
 
 ## Highlight Rendering Support
 
@@ -708,7 +652,6 @@ A UI-agnostic structure that maps:
 
 This decouples persistence from rendering.
 
----
 
 ### HighlightDecorationService
 
@@ -720,7 +663,6 @@ Responsibilities include:
 
 This service bridges the database and the navigator.
 
----
 
 ## Text Extraction for Indexing
 
@@ -736,7 +678,6 @@ This supports:
 * Cross-book discovery
 * Offline indexing
 
----
 
 ### Extraction Flow
 
@@ -747,7 +688,6 @@ This supports:
 
 Extraction errors are isolated per chapter.
 
----
 
 ### HTML Cleaning Strategy
 
@@ -757,7 +697,6 @@ Extraction errors are isolated per chapter.
 
 This produces search-friendly text without layout noise.
 
----
 
 ## DRM Detection and Handling
 
@@ -767,7 +706,6 @@ This produces search-friendly text without layout noise.
 
 Centralizes DRM interpretation and messaging.
 
----
 
 ### DRM Status Evaluation
 
@@ -780,7 +718,6 @@ Centralizes DRM interpretation and messaging.
 
 This enables feature gating without breaking reading.
 
----
 
 ### User Messaging
 
@@ -792,7 +729,6 @@ DRM messages are:
 
 Reading is never blocked unless technically required.
 
----
 
 ## Reading Preferences
 
@@ -808,7 +744,6 @@ Encapsulates all user-controlled reading parameters:
 
 Preferences are intentionally orthogonal to reading state.
 
----
 
 ### PreferencesManager
 
@@ -820,7 +755,6 @@ Preferences are intentionally orthogonal to reading state.
 
 Persistence is deferred to production storage solutions.
 
----
 
 ## Integration Requirements
 
@@ -835,7 +769,6 @@ The reader core depends on:
 
 Correct version alignment is mandatory.
 
----
 
 ### Critical Setup Steps
 
@@ -848,7 +781,6 @@ Implementers must ensure:
 
 Failure here results in subtle, hard-to-debug errors.
 
----
 
 ## Known Limitations
 
@@ -861,7 +793,6 @@ The current implementation intentionally simplifies:
 
 These are acceptable for Phase 2 and must be addressed before production.
 
----
 
 ## Design Invariants Enforced by the Reader Core
 
@@ -870,28 +801,24 @@ These are acceptable for Phase 2 and must be addressed before production.
 * Prevents resource leaks
 * Ensures consistent state
 
----
 
 ### Invariant 2: State Is Observable
 
 * All reading state flows outward
 * No hidden internal mutations
 
----
 
 ### Invariant 3: Persistence Is Explicit
 
 * No silent database writes
 * Progress and sessions are deliberate
 
----
 
 ### Invariant 4: DRM Is Respected
 
 * Features degrade gracefully
 * Reading remains primary
 
----
 
 ## Summary
 
