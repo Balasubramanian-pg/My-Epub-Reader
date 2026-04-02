@@ -19,7 +19,6 @@ The **Markdown Export Engine** ensures that all user-created knowledge is:
 
 This phase transforms the app from a closed container into a **knowledge authoring system**.
 
----
 
 ## Design Goals
 
@@ -33,7 +32,6 @@ The export system is designed around five non-negotiable goals:
 
 The output must be useful 10 years from now without the app.
 
----
 
 ## Conceptual Model
 
@@ -49,7 +47,6 @@ Each exported note preserves:
 * Its context
 * Its relationships
 
----
 
 ### Knowledge Representation Strategy
 
@@ -62,7 +59,6 @@ The system uses a layered representation:
 
 Each layer serves a different consumer.
 
----
 
 ## Export Boundaries
 
@@ -74,7 +70,6 @@ The export system supports three scopes:
 
 Each scope is implemented explicitly and independently to avoid accidental data loss or partial exports.
 
----
 
 ## MarkdownExportService
 
@@ -92,7 +87,6 @@ It is responsible for:
 
 It does not interact with UI state.
 
----
 
 ### Threading Model
 
@@ -104,7 +98,6 @@ This ensures:
 * Safe file system access
 * Predictable performance on large exports
 
----
 
 ## Export Directory Structure
 
@@ -124,7 +117,6 @@ Example:
 EPubReaderExport/2026-02-02_143012/
 ```
 
----
 
 ### Book-Level Organization
 
@@ -137,7 +129,6 @@ Each book folder contains:
 
 This mirrors the mental model of reading and annotation.
 
----
 
 ### Standalone Notes
 
@@ -149,7 +140,6 @@ Standalone Notes/
 
 This ensures no orphaned ideas are lost or hidden.
 
----
 
 ## Filename Strategy
 
@@ -173,7 +163,6 @@ Example:
 2026-02-02_14_power-of-habit.md
 ```
 
----
 
 ### Filename Sanitization
 
@@ -185,7 +174,6 @@ The system removes:
 
 This guarantees cross-platform compatibility.
 
----
 
 ## Markdown Content Structure
 
@@ -193,7 +181,6 @@ Each exported note follows the same structure.
 
 Consistency is intentional and enforced.
 
----
 
 ### YAML Frontmatter
 
@@ -217,7 +204,6 @@ This metadata enables:
 * Search and filtering
 * External automation
 
----
 
 ### Highlight Preservation
 
@@ -229,7 +215,6 @@ If a note originated from a highlight:
 
 This maintains academic and contextual integrity.
 
----
 
 ### Note Body
 
@@ -239,7 +224,6 @@ No formatting assumptions are imposed.
 
 The user’s voice is preserved exactly.
 
----
 
 ### Internal Links
 
@@ -257,7 +241,6 @@ This format is intentionally chosen because it is supported by:
 * Foam
 * Many Markdown parsers
 
----
 
 ### Backlinks Section
 
@@ -269,7 +252,6 @@ This ensures that:
 * Tools without backlink indexing still show relationships
 * Human readers can trace idea lineage
 
----
 
 ## Index Files
 
@@ -285,7 +267,6 @@ This file provides:
 
 It acts as a table of contents.
 
----
 
 ### Master Index
 
@@ -300,7 +281,6 @@ It explains:
 
 This file is written for humans, not software.
 
----
 
 ## ExportAllNotes Strategy
 
@@ -312,7 +292,6 @@ When exporting the entire library:
 
 This allows partial imports and selective reuse.
 
----
 
 ## Export Result Model
 
@@ -326,7 +305,6 @@ The export service returns structured results:
 
 No exceptions leak into the UI layer.
 
----
 
 ## ExportViewModel
 
@@ -340,7 +318,6 @@ The ViewModel bridges:
 
 It owns no export logic.
 
----
 
 ### State Model
 
@@ -353,7 +330,6 @@ The export lifecycle is represented explicitly:
 
 This prevents ambiguous UI states.
 
----
 
 ### Progress Handling
 
@@ -365,7 +341,6 @@ This is a deliberate choice:
 * I/O progress is unreliable
 * User trust matters more than fake precision
 
----
 
 ## Export Dialog UI
 
@@ -378,7 +353,6 @@ The user must explicitly choose:
 
 There are no default actions.
 
----
 
 ### ExportProgressDialog
 
@@ -390,7 +364,6 @@ During export:
 
 This prevents partial exports and corruption.
 
----
 
 ### ExportSuccessDialog
 
@@ -402,7 +375,6 @@ On success:
 
 This respects the user’s ownership of their data.
 
----
 
 ### ExportErrorDialog
 
@@ -414,7 +386,6 @@ Errors are:
 
 No stack traces are exposed.
 
----
 
 ## Invariants Enforced by Export
 
@@ -424,7 +395,6 @@ Every note that exists in the system is exportable.
 
 There are no hidden states.
 
----
 
 ### Invariant 2: Graph Integrity
 
@@ -432,7 +402,6 @@ Links and backlinks are preserved explicitly.
 
 The graph survives outside the app.
 
----
 
 ### Invariant 3: Tool Independence
 
@@ -440,13 +409,11 @@ No proprietary formats are used.
 
 Markdown and YAML are intentional.
 
----
 
 ### Invariant 4: Human Readability
 
 A person can open any file and understand it without tooling.
 
----
 
 ### Invariant 5: Repeatability
 
@@ -454,7 +421,6 @@ Exports are deterministic and repeatable.
 
 Running export twice produces equivalent structure.
 
----
 
 ## Relationship to the Overall System
 
@@ -468,7 +434,6 @@ This phase completes the lifecycle:
 
 Without export, the system would be incomplete.
 
----
 
 ## Summary
 
@@ -490,7 +455,6 @@ and becomes a **knowledge instrument**.
 
 ### Refined and Finalized Technical Documentation
 
----
 
 ## Purpose and Scope
 
@@ -507,7 +471,6 @@ The **Markdown Export Engine** ensures that all user-created knowledge remains:
 
 This phase transforms the application from a closed reading environment into a **knowledge authoring and preservation system**.
 
----
 
 ## Design Goals
 
@@ -521,7 +484,6 @@ The export system is governed by five non-negotiable principles:
 
 The exported material must remain useful decades into the future, independent of the app.
 
----
 
 ## Conceptual Model
 
@@ -537,7 +499,6 @@ Each exported note preserves:
 * Its contextual metadata
 * Its explicit relationships to other notes
 
----
 
 ### Knowledge Representation Strategy
 
@@ -550,7 +511,6 @@ The system uses a layered representation model:
 
 Each layer serves a distinct audience, from automation tools to future readers.
 
----
 
 ## Export Boundaries
 
@@ -562,7 +522,6 @@ The export engine supports three explicit scopes:
 
 Each scope is implemented independently to prevent accidental data loss, partial exports, or ambiguous behavior.
 
----
 
 ## MarkdownExportService
 
@@ -580,7 +539,6 @@ Its responsibilities include:
 
 It has no dependency on UI state or presentation logic.
 
----
 
 ### Threading Model
 
@@ -592,7 +550,6 @@ This guarantees:
 * Safe interaction with the filesystem
 * Predictable behavior for large libraries
 
----
 
 ## Export Directory Structure
 
@@ -612,7 +569,6 @@ Example:
 EPubReaderExport/2026-02-02_143012/
 ```
 
----
 
 ### Book-Level Organization
 
@@ -625,7 +581,6 @@ Each book directory contains:
 
 This structure mirrors how readers mentally organize annotations.
 
----
 
 ### Standalone Notes
 
@@ -637,7 +592,6 @@ Standalone Notes/
 
 This prevents orphaned ideas from being hidden or discarded.
 
----
 
 ## Filename Strategy
 
@@ -661,7 +615,6 @@ Example:
 2026-02-02_14_power-of-habit.md
 ```
 
----
 
 ### Filename Sanitization
 
@@ -673,7 +626,6 @@ The sanitization process removes:
 
 This guarantees compatibility across operating systems.
 
----
 
 ## Markdown Content Structure
 
@@ -681,7 +633,6 @@ All exported notes follow a single, enforced structure.
 
 Consistency is intentional and critical for tooling compatibility.
 
----
 
 ### YAML Frontmatter
 
@@ -705,7 +656,6 @@ This metadata enables:
 * Advanced search and filtering
 * External automation workflows
 
----
 
 ### Highlight Preservation
 
@@ -717,7 +667,6 @@ If a note originates from a highlight:
 
 This maintains academic integrity and contextual accuracy.
 
----
 
 ### Note Body
 
@@ -727,7 +676,6 @@ No formatting, rewriting, or normalization is applied.
 
 The author’s original voice is preserved exactly.
 
----
 
 ### Internal Links
 
@@ -745,7 +693,6 @@ This format is intentionally chosen for compatibility with:
 * Foam
 * Most modern Markdown parsers
 
----
 
 ### Backlinks Section
 
@@ -757,7 +704,6 @@ This ensures:
 * Visibility in tools without backlink indexing
 * Clear idea lineage for human readers
 
----
 
 ## Index Files
 
@@ -773,7 +719,6 @@ This file includes:
 
 It functions as a table of contents.
 
----
 
 ### Master Index
 
@@ -788,7 +733,6 @@ It documents:
 
 This file is written for humans, not parsers.
 
----
 
 ## ExportAllNotes Strategy
 
@@ -800,7 +744,6 @@ When exporting the entire library:
 
 This supports partial imports, selective reuse, and long-term archival.
 
----
 
 ## Export Result Model
 
@@ -814,7 +757,6 @@ The export service returns structured outcomes:
 
 Exceptions never leak into the UI layer.
 
----
 
 ## ExportViewModel
 
@@ -828,7 +770,6 @@ The ViewModel acts as a bridge between:
 
 It contains no export logic.
 
----
 
 ### State Model
 
@@ -841,7 +782,6 @@ The export lifecycle is explicitly modeled as:
 
 This prevents ambiguous or misleading UI states.
 
----
 
 ### Progress Handling
 
@@ -853,7 +793,6 @@ This decision is deliberate:
 * I/O progress is unreliable
 * Trust is preferred over false precision
 
----
 
 ## Export Dialog UI
 
@@ -866,7 +805,6 @@ The user must explicitly choose between:
 
 There are no implicit defaults.
 
----
 
 ### ExportProgressDialog
 
@@ -878,7 +816,6 @@ During export:
 
 This prevents partial or corrupted exports.
 
----
 
 ### ExportSuccessDialog
 
@@ -890,7 +827,6 @@ On success:
 
 This reinforces user ownership of their data.
 
----
 
 ### ExportErrorDialog
 
@@ -902,7 +838,6 @@ Error messages are:
 
 No internal stack traces are exposed.
 
----
 
 ## Invariants Enforced by Export
 
@@ -912,7 +847,6 @@ Every note in the system is exportable.
 
 No hidden or implicit states exist.
 
----
 
 ### Invariant 2: Graph Integrity
 
@@ -920,7 +854,6 @@ Links and backlinks are preserved explicitly.
 
 The knowledge graph survives outside the application.
 
----
 
 ### Invariant 3: Tool Independence
 
@@ -928,13 +861,11 @@ Only open, widely supported formats are used.
 
 Markdown and YAML are intentional choices.
 
----
 
 ### Invariant 4: Human Readability
 
 Any exported file can be opened and understood without tooling.
 
----
 
 ### Invariant 5: Repeatability
 
@@ -942,7 +873,6 @@ Exports are deterministic and repeatable.
 
 Multiple exports produce equivalent structures.
 
----
 
 ## Relationship to the Overall System
 
@@ -956,7 +886,6 @@ This phase completes the full lifecycle:
 
 Without export, the system would remain incomplete.
 
----
 
 ## Final Summary
 
@@ -971,4 +900,3 @@ It guarantees that:
 
 At this point, the application ceases to be merely an EPUB reader
 and becomes a **durable knowledge instrument**.
-
