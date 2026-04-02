@@ -12,7 +12,6 @@ Unlike the reader UI, this layer is not about immersion. It is about **deliberat
 
 This documentation is intended for UI engineers, product designers, and developers extending the knowledge graph experience.
 
----
 
 ## Architectural Role of the Notes UI Layer
 
@@ -26,7 +25,6 @@ This documentation is intended for UI engineers, product designers, and develope
 This layer is intentionally declarative.
 It asks questions, presents options, and collects decisions.
 
----
 
 ## High-Level Responsibilities
 
@@ -44,7 +42,6 @@ It explicitly avoids:
 * Implicit graph mutations
 * Business rule enforcement
 
----
 
 ## CreateNoteDialog
 
@@ -54,7 +51,6 @@ Enables **thinking-first note creation** without requiring a book or highlight.
 
 This dialog formalizes the idea that notes are **independent cognitive objects**.
 
----
 
 ### Design Intent
 
@@ -62,7 +58,6 @@ This dialog formalizes the idea that notes are **independent cognitive objects**
 * Set correct mental model early
 * Reduce friction for capturing thoughts
 
----
 
 ### Interaction Rules
 
@@ -72,7 +67,6 @@ This dialog formalizes the idea that notes are **independent cognitive objects**
 
 The dialog explains what makes this note different from annotations.
 
----
 
 ## LinkNoteDialog
 
@@ -82,7 +76,6 @@ This is one of the most critical components in the entire system.
 
 It is the **manual edge constructor** of the knowledge graph.
 
----
 
 ### Purpose
 
@@ -94,7 +87,6 @@ Links are:
 * Directional internally
 * Bidirectional in experience
 
----
 
 ### Search-Based Linking
 
@@ -106,7 +98,6 @@ The dialog includes:
 
 This design scales gracefully as the note corpus grows.
 
----
 
 ### LinkableNoteCard
 
@@ -122,7 +113,6 @@ Represents a candidate note in the linking process.
 
 This ensures users understand *what* they are linking, not just *that* they are linking.
 
----
 
 ### Design Safeguards
 
@@ -132,7 +122,6 @@ This ensures users understand *what* they are linking, not just *that* they are 
 
 Every link is a conscious act.
 
----
 
 ## DeleteConfirmationDialog
 
@@ -140,7 +129,6 @@ Every link is a conscious act.
 
 Prevents accidental destruction of ideas and structure.
 
----
 
 ### Design Philosophy
 
@@ -150,7 +138,6 @@ Deletion is:
 * Informed
 * Reversible only by recreation
 
----
 
 ### User Education
 
@@ -162,7 +149,6 @@ The dialog explains:
 
 This preserves trust in the system.
 
----
 
 ## Utility Functions
 
@@ -174,7 +160,6 @@ Provides **relative time context** for notes.
 
 Humans reason better with “recent” than with timestamps.
 
----
 
 ### Behavior
 
@@ -184,7 +169,6 @@ Humans reason better with “recent” than with timestamps.
 
 This supports scanning and memory recall.
 
----
 
 ### formatFullDate
 
@@ -194,7 +178,6 @@ Provides precise timestamps for:
 * Debugging
 * Export contexts
 
----
 
 ## Preview Data
 
@@ -202,7 +185,6 @@ Provides precise timestamps for:
 
 Supports Compose previews and design iteration.
 
----
 
 ### Characteristics
 
@@ -212,7 +194,6 @@ Supports Compose previews and design iteration.
 
 This enables meaningful UI testing without live data.
 
----
 
 ## GraphVisualizationScreen (Stretch Goal)
 
@@ -220,7 +201,6 @@ This enables meaningful UI testing without live data.
 
 Placeholder for future **interactive graph exploration**.
 
----
 
 ### Intended Capabilities
 
@@ -233,7 +213,6 @@ Future implementations may include:
 
 This screen is intentionally deferred to avoid premature complexity.
 
----
 
 ## Conceptual Integrity Checklist
 
@@ -247,7 +226,6 @@ This layer completes the cognitive loop.
 * No book dependency
 * No highlight requirement
 
----
 
 #### Links Are Explicit
 
@@ -255,7 +233,6 @@ This layer completes the cognitive loop.
 * Search-assisted, user-confirmed linking
 * One link per action
 
----
 
 #### Backlinks Are Guaranteed
 
@@ -263,14 +240,12 @@ This layer completes the cognitive loop.
 * No additional logic required
 * Memory emerges naturally
 
----
 
 #### Search Suggests, Structure Persists
 
 * FTS helps rediscover ideas
 * Links preserve meaning over time
 
----
 
 #### Sources Are Preserved
 
@@ -278,7 +253,6 @@ This layer completes the cognitive loop.
 * Books remain contextual anchors
 * Navigation remains reversible
 
----
 
 ## Supported Usage Flows
 
@@ -289,7 +263,6 @@ This layer completes the cognitive loop.
 * Create note
 * Link to existing ideas
 
----
 
 ### Thinking-First Flow
 
@@ -297,7 +270,6 @@ This layer completes the cognitive loop.
 * Explore related notes
 * Link later
 
----
 
 ### Linking-Later Flow
 
@@ -305,7 +277,6 @@ This layer completes the cognitive loop.
 * Discover resonance
 * Create explicit link
 
----
 
 ### Rediscovery Flow
 
@@ -314,7 +285,6 @@ This layer completes the cognitive loop.
 * Follow backlinks
 * Reconstruct thought lineage
 
----
 
 ## Summary
 
@@ -351,7 +321,6 @@ It provides:
 
 This documentation is intended for engineers and designers working on the **core thinking experience** of the application.
 
----
 
 ## Architectural Role of the Knowledge Graph UI
 
@@ -365,7 +334,6 @@ This documentation is intended for engineers and designers working on the **core
 The UI never invents structure.
 It reveals structure that the user has created.
 
----
 
 ## High-Level Responsibilities
 
@@ -384,7 +352,6 @@ It explicitly avoids:
 * Implicit graph expansion
 * Background graph mutation
 
----
 
 ## NotesViewModel
 
@@ -402,7 +369,6 @@ It coordinates:
 
 It is the only place where graph-wide state is assembled.
 
----
 
 ### Core State Streams
 
@@ -412,7 +378,6 @@ It is the only place where graph-wide state is assembled.
 * Includes outgoing links and backlinks
 * Acts as the canonical in-memory graph snapshot
 
----
 
 #### Selected Note
 
@@ -420,7 +385,6 @@ It is the only place where graph-wide state is assembled.
 * Drives the detail pane
 * Always includes full neighborhood context
 
----
 
 #### UI State
 
@@ -433,7 +397,6 @@ Encapsulates transient UI concerns:
 
 This keeps Compose logic predictable.
 
----
 
 ### Search and Filtering
 
@@ -452,7 +415,6 @@ Filtering supports:
 
 This enables multiple cognitive entry points into the graph.
 
----
 
 ## Graph Mutations
 
@@ -464,7 +426,6 @@ This enables multiple cognitive entry points into the graph.
 
 This supports thinking-first workflows.
 
----
 
 ### Note Updates
 
@@ -472,7 +433,6 @@ This supports thinking-first workflows.
 * Modified timestamps are updated
 * Detail pane refreshes automatically
 
----
 
 ### Note Deletion
 
@@ -484,7 +444,6 @@ Deletion guarantees:
 
 The UI never deletes silently.
 
----
 
 ### Linking Notes (Core Operation)
 
@@ -499,7 +458,6 @@ When linking notes:
 
 The UI reflects structure, but the repository enforces invariants.
 
----
 
 ### Unlinking Notes
 
@@ -509,7 +467,6 @@ Unlinking removes a single edge.
 * Backlinks update automatically
 * Graph remains consistent
 
----
 
 ## NotesScreen
 
@@ -523,7 +480,6 @@ It provides:
 * Global search and filtering
 * Direct access to creation and linking
 
----
 
 ### Two-Pane Design
 
@@ -536,7 +492,6 @@ It provides:
 This pane answers:
 “What ideas do I have?”
 
----
 
 #### Right Pane: Note Detail
 
@@ -547,7 +502,6 @@ This pane answers:
 This pane answers:
 “How does this idea relate to others?”
 
----
 
 ## NotesTopBar
 
@@ -563,7 +517,6 @@ Features:
 
 Search is always scoped to the entire graph.
 
----
 
 ## NotesListPane
 
@@ -575,7 +528,6 @@ When no notes exist, the UI:
 * Encourages first creation
 * Avoids blank or confusing screens
 
----
 
 ### NoteListItem
 
@@ -592,7 +544,6 @@ Each list item surfaces:
 
 This allows rapid scanning of the idea space.
 
----
 
 ## NoteDetailPane
 
@@ -602,7 +553,6 @@ This is the **knowledge graph navigator**.
 
 It shows a note **in context**, not in isolation.
 
----
 
 ### Editing Mode
 
@@ -612,7 +562,6 @@ It shows a note **in context**, not in isolation.
 
 Edits never occur implicitly.
 
----
 
 ### Source Context
 
@@ -624,7 +573,6 @@ If a note originates from a highlight:
 
 This preserves intellectual provenance.
 
----
 
 ### Linked Notes Section
 
@@ -634,7 +582,6 @@ Shows outgoing links.
 * Allows unlinking
 * Enables forward navigation
 
----
 
 ### Backlinks Section (Memory Mechanism)
 
@@ -651,7 +598,6 @@ They are:
 * Non-editable
 * Central to long-term recall
 
----
 
 ### Related Notes (FTS-Based Suggestions)
 
@@ -663,7 +609,6 @@ These are **suggestions, not structure**.
 
 This preserves trust in the graph.
 
----
 
 ### Metadata
 
@@ -675,7 +620,6 @@ Displays:
 
 This supports auditing, export, and debugging.
 
----
 
 ## Graph Navigation Components
 
@@ -692,7 +636,6 @@ Provides:
 * Clear iconography
 * Uniform navigation affordances
 
----
 
 ### LinkedNoteCard
 
@@ -704,7 +647,6 @@ Supports:
 * Optional unlinking
 * Preview-level context
 
----
 
 ### RelatedNotesSection
 
@@ -715,7 +657,6 @@ This reinforces the conceptual boundary between:
 * Suggestions
 * Commitments
 
----
 
 ## SourceCard
 
@@ -731,7 +672,6 @@ Provides:
 
 This closes the loop between reading and thinking.
 
----
 
 ## Design Invariants Enforced by This Layer
 
@@ -741,7 +681,6 @@ This closes the loop between reading and thinking.
 * Independent browsing
 * Equal visual weight
 
----
 
 ### Invariant 2: Links Are Intentional
 
@@ -749,7 +688,6 @@ This closes the loop between reading and thinking.
 * No automation
 * Clear affordances
 
----
 
 ### Invariant 3: Backlinks Are Non-Negotiable
 
@@ -757,7 +695,6 @@ This closes the loop between reading and thinking.
 * Always accurate
 * Never editable directly
 
----
 
 ### Invariant 4: Discovery Is Separate from Structure
 
@@ -765,7 +702,6 @@ This closes the loop between reading and thinking.
 * User decides
 * Graph remembers
 
----
 
 ### Invariant 5: Sources Are Preserved
 
@@ -773,7 +709,6 @@ This closes the loop between reading and thinking.
 * Books remain navigable
 * Context is never lost
 
----
 
 ## Summary
 
