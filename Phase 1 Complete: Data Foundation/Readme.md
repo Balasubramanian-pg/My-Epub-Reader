@@ -16,7 +16,6 @@ This document explains the **database layer architecture** for a local-first EPU
 
 This README is intended for developers working on the data, domain, and search layers.
 
----
 
 ## Architectural Philosophy
 
@@ -39,7 +38,6 @@ This README is intended for developers working on the data, domain, and search l
 * Notes own **ideas and relationships**.
 * Search is orthogonal and powered by FTS.
 
----
 
 ## High-Level Data Model Overview
 
@@ -53,7 +51,6 @@ This README is intended for developers working on the data, domain, and search l
 
 Each layer is loosely coupled and queryable independently.
 
----
 
 ## Core Entities
 
@@ -74,7 +71,6 @@ Represents an EPUB source file.
 * `rating`: User-defined quality signal
 * `importTimestamp`: Enables recency queries
 
----
 
 ### Chapter
 
@@ -91,7 +87,6 @@ Represents structural navigation inside a book.
 * `chapterIndex`: Ordering within the book
 * `cfiOrHref`: Deep link locator
 
----
 
 ### Highlight
 
@@ -111,7 +106,6 @@ Represents quoted text from a book.
 
 Highlights are always book-owned and cascade on book deletion.
 
----
 
 ### Note
 
@@ -132,7 +126,6 @@ The **primary node** in the knowledge graph.
 
 This design enables thinking-first workflows.
 
----
 
 ### NoteLink
 
@@ -152,7 +145,6 @@ Represents **explicit, directional relationships** between notes.
 
 Deleting a note deletes all its edges.
 
----
 
 ### Tag and BookTag
 
@@ -166,7 +158,6 @@ Supports categorization and filtering.
 
 This avoids premature ontology design.
 
----
 
 ### ReadingProgress
 
@@ -185,7 +176,6 @@ Tracks the last known reading state for a book.
 
 One row per book, enforced by a unique index.
 
----
 
 ### ReadingSession
 
@@ -204,7 +194,6 @@ Captures reading analytics.
 
 Sessions are append-only and analytics-friendly.
 
----
 
 ## Full-Text Search (FTS)
 
@@ -223,7 +212,6 @@ Virtual table for searching EPUB content.
 Search is not limited to metadata or highlights.
 Ideas can be discovered across the entire library.
 
----
 
 ### NoteFts
 
@@ -236,7 +224,6 @@ Virtual table for searching notes.
 
 This enables global thinking recall independent of source books.
 
----
 
 ## Data Access Objects (DAOs)
 
@@ -246,7 +233,6 @@ This enables global thinking recall independent of source books.
 * Enables live UI updates.
 * Supports incremental recomposition.
 
----
 
 ### BookDao
 
@@ -257,7 +243,6 @@ Supports:
 * Rating-based discovery
 * Library analytics
 
----
 
 ### ChapterDao
 
@@ -267,7 +252,6 @@ Supports:
 * Re-import cleanup
 * Structural consistency
 
----
 
 ### HighlightDao
 
@@ -277,7 +261,6 @@ Supports:
 * Contextual note creation
 * Highlight metrics
 
----
 
 ### NoteDao
 
@@ -292,7 +275,6 @@ The most critical DAO.
 
 Backlinks are resolved dynamically using reverse link queries.
 
----
 
 ### NoteLinkDao
 
@@ -306,7 +288,6 @@ Manages graph edges.
 
 No implicit links are ever created.
 
----
 
 ### TagDao
 
@@ -316,7 +297,6 @@ Supports:
 * Book-tag assignment
 * Tag-based filtering
 
----
 
 ### ReadingProgressDao
 
@@ -326,7 +306,6 @@ Handles:
 * Completion marking
 * Progress persistence
 
----
 
 ### ReadingSessionDao
 
@@ -335,7 +314,6 @@ Supports time-based analytics:
 * Daily reading totals
 * Arbitrary date range summaries
 
----
 
 ### SearchDao
 
@@ -349,7 +327,6 @@ Unified search interface for:
 * Structured search result DTOs
 * Jump-to-location metadata
 
----
 
 ## Search Result Models
 
@@ -364,7 +341,6 @@ Contains:
 
 Used to jump directly to the passage.
 
----
 
 ### NoteSearchResult
 
@@ -376,7 +352,6 @@ Contains:
 
 Used for global idea recall.
 
----
 
 ## Database Configuration
 
@@ -391,7 +366,6 @@ Used for global idea recall.
 * Core entities
 * FTS virtual tables
 
----
 
 ### Database Builder
 
@@ -404,7 +378,6 @@ Used for global idea recall.
 
 * Replace with versioned migrations before release.
 
----
 
 ## Lifecycle and Data Integrity Rules
 
@@ -415,7 +388,6 @@ Used for global idea recall.
 * Deleting a note deletes all its links.
 * Notes remain durable unless explicitly deleted.
 
----
 
 ## Phase 1 Completion Guarantees
 
@@ -427,7 +399,6 @@ This database layer guarantees:
 * Full-text search across sources and ideas
 * Offline-first reliability
 
----
 
 ## Future Extensions (Out of Scope)
 
@@ -439,7 +410,6 @@ This database layer guarantees:
 
 These are intentionally deferred.
 
----
 
 ## Summary
 
@@ -467,7 +437,6 @@ This layer ensures that:
 * Backlinks emerge automatically
 * Full-text search suggests, but never decides
 
----
 
 ## Architectural Role of the Repository Layer
 
@@ -483,7 +452,6 @@ This layer ensures that:
 
 The repository layer is where **meaning** is enforced.
 
----
 
 ## Domain Models (UI-Facing Contracts)
 
@@ -505,7 +473,6 @@ The UI should not assemble counts and relationships itself. This model provides 
 
 This supports library views, dashboards, and book detail screens.
 
----
 
 ### NoteWithLinks
 
@@ -527,7 +494,6 @@ The most important domain model in the system.
 
 Every serious note view should be powered by this model.
 
----
 
 ### SearchResult (Sealed Class)
 
@@ -540,7 +506,6 @@ A unified abstraction for global search.
 
 This allows the UI to render heterogeneous results without leaking storage details.
 
----
 
 ## BookRepository
 
@@ -551,7 +516,6 @@ This allows the UI to render heterogeneous results without leaking storage detai
 * Metadata aggregation
 * Book-level FTS indexing control
 
----
 
 ### Enriched Book Retrieval
 
@@ -563,7 +527,6 @@ This allows the UI to render heterogeneous results without leaking storage detai
 
 This is a deliberate anti-pattern to “query everything in the UI”.
 
----
 
 ### Book Import Flow
 
@@ -579,7 +542,6 @@ Responsibilities include:
 
 EPUB parsing and text extraction happen outside, but persistence happens here.
 
----
 
 ### Deletion Semantics
 
@@ -592,7 +554,6 @@ Key design rule:
 
 This separation avoids accidental orphaned search data.
 
----
 
 ### DRM-Aware Indexing
 
@@ -603,7 +564,6 @@ This separation avoids accidental orphaned search data.
 
 The repository layer enforces this policy, not the database.
 
----
 
 ## HighlightRepository
 
@@ -619,7 +579,6 @@ Highlights are deliberately kept simple.
 
 Highlights are context, not cognition.
 
----
 
 ## NoteRepository (Knowledge Graph Core)
 
@@ -629,7 +588,6 @@ This repository enforces **knowledge graph integrity**.
 
 If this repository is correct, the system thinks correctly.
 
----
 
 ### Retrieving Notes with Context
 
@@ -645,7 +603,6 @@ It guarantees that:
 
 Backlinks are not optional UI decorations. They are memory.
 
----
 
 ### Note Creation Modes
 
@@ -659,7 +616,6 @@ Backlinks are not optional UI decorations. They are memory.
 
 This supports ideation outside reading.
 
----
 
 #### Highlight-Based Notes (Reading-First)
 
@@ -671,7 +627,6 @@ This supports ideation outside reading.
 
 Both flows are equal citizens.
 
----
 
 ### Note Updates and Reindexing
 
@@ -682,7 +637,6 @@ Every note update:
 
 Search is always consistent with thought.
 
----
 
 ### Linking Notes (Graph Edges)
 
@@ -697,7 +651,6 @@ This method enforces multiple invariants:
 
 Only explicit, human-curated links are allowed.
 
----
 
 ### Unlinking Notes
 
@@ -708,7 +661,6 @@ Only explicit, human-curated links are allowed.
 
 No additional cleanup logic is required.
 
----
 
 ### Note Deletion
 
@@ -721,7 +673,6 @@ Deletion guarantees:
 
 The graph never contains dangling edges.
 
----
 
 ### Related Notes via Search (Suggestions)
 
@@ -734,7 +685,6 @@ Purpose:
 
 FTS is advisory. The graph remains intentional.
 
----
 
 ### Key Term Extraction
 
@@ -746,7 +696,6 @@ Current implementation:
 
 This is intentionally naive and replaceable.
 
----
 
 ## SearchRepository
 
@@ -756,7 +705,6 @@ This is intentionally naive and replaceable.
 * Result normalization
 * Context-aware mapping
 
----
 
 ### Global Search
 
@@ -774,7 +722,6 @@ Returns:
 
 This supports discovery without collapsing context.
 
----
 
 ## ReadingSessionRepository
 
@@ -784,7 +731,6 @@ This supports discovery without collapsing context.
 * Reading analytics
 * Progress updates
 
----
 
 ### Session Start and End
 
@@ -794,7 +740,6 @@ This supports discovery without collapsing context.
 
 Analytics correctness is separated from reading correctness.
 
----
 
 ### Aggregated Metrics
 
@@ -805,7 +750,6 @@ Supports:
 
 This enables habit and insight features without polluting core models.
 
----
 
 ## Graph Integrity Rules (Enforced by Repositories)
 
@@ -818,7 +762,6 @@ These rules are conceptual, but enforced in code.
 
 This is enforced by optional foreign keys and repository APIs.
 
----
 
 ### Rule 2: Links Are Explicit
 
@@ -827,7 +770,6 @@ This is enforced by optional foreign keys and repository APIs.
 
 This preserves trust in the graph.
 
----
 
 ### Rule 3: Backlinks Are Guaranteed
 
@@ -836,7 +778,6 @@ This preserves trust in the graph.
 
 Memory is a property of structure, not UI.
 
----
 
 ### Rule 4: Highlights Ground, Not Own
 
@@ -845,7 +786,6 @@ Memory is a property of structure, not UI.
 
 This avoids annotation traps.
 
----
 
 ### Rule 5: Books Are Sources
 
@@ -854,7 +794,6 @@ This avoids annotation traps.
 
 Books are inputs, not silos.
 
----
 
 ### Rule 6: Search Suggests, Graph Remembers
 
@@ -863,7 +802,6 @@ Books are inputs, not silos.
 
 Ephemeral relevance versus durable understanding.
 
----
 
 ### Rule 7: Everything Is Local
 
@@ -873,7 +811,6 @@ Ephemeral relevance versus durable understanding.
 
 This system is user-owned by design.
 
----
 
 ## Summary
 
