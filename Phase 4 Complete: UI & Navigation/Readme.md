@@ -15,7 +15,6 @@ Unlike the reader screen, which is transient and immersive, the Book Details scr
 
 This documentation is intended for engineers and designers working on **library-level cognition and metadata management**.
 
----
 
 ## Architectural Role of the Book Details Screen
 
@@ -28,7 +27,6 @@ This documentation is intended for engineers and designers working on **library-
 
 This screen treats the book as a **source object**, not a container for notes.
 
----
 
 ## High-Level Responsibilities
 
@@ -47,7 +45,6 @@ It explicitly avoids:
 * Managing note links
 * Navigating the full knowledge graph
 
----
 
 ## BookDetailsViewModel
 
@@ -63,7 +60,6 @@ It coordinates:
 * UI dialog state
 * Error and loading state
 
----
 
 ### Core State Streams
 
@@ -81,7 +77,6 @@ It includes:
 
 This ensures the screen can be rendered without secondary queries.
 
----
 
 #### Recent Highlights
 
@@ -91,7 +86,6 @@ This ensures the screen can be rendered without secondary queries.
 
 This supports rapid recall of why the book mattered.
 
----
 
 #### Similar Books
 
@@ -105,7 +99,6 @@ Potential similarity signals include:
 
 The current implementation intentionally defers this logic.
 
----
 
 #### UI State
 
@@ -117,7 +110,6 @@ Tracks:
 
 This separation keeps Compose logic deterministic.
 
----
 
 ## BookDetailsScreen
 
@@ -127,7 +119,6 @@ This separation keeps Compose logic deterministic.
 
 It provides a vertically scrollable, narrative layout that moves from identity to action.
 
----
 
 ### Screen Lifecycle
 
@@ -136,7 +127,6 @@ It provides a vertically scrollable, narrative layout that moves from identity t
 * Dialogs are layered declaratively
 * Destructive actions always require confirmation
 
----
 
 ## Book Header
 
@@ -150,7 +140,6 @@ It answers:
 * How far along am I?
 * How much value has it produced?
 
----
 
 ### Cover Display
 
@@ -160,7 +149,6 @@ It answers:
 
 The cover is treated as a visual anchor, not decoration.
 
----
 
 ### Progress Overlay
 
@@ -172,7 +160,6 @@ If reading has begun:
 
 This reinforces continuity.
 
----
 
 ### Core Metadata
 
@@ -184,7 +171,6 @@ Displayed prominently:
 
 These are the most cognitively salient attributes.
 
----
 
 ### RatingBar
 
@@ -196,7 +182,6 @@ The rating control is:
 
 It represents a **post-reading judgment**, not a reading tool.
 
----
 
 ### Engagement Stats
 
@@ -207,7 +192,6 @@ Stat chips summarize:
 
 These act as signals of **idea density**, not just usage.
 
----
 
 ## Action Buttons
 
@@ -215,7 +199,6 @@ These act as signals of **idea density**, not just usage.
 
 These buttons represent **forward actions**, not configuration.
 
----
 
 ### Open Reader
 
@@ -225,7 +208,6 @@ These buttons represent **forward actions**, not configuration.
 
 This reinforces reading as the core activity.
 
----
 
 ### Export Notes
 
@@ -235,7 +217,6 @@ This reinforces reading as the core activity.
 
 Export is treated as a serious, intentional act.
 
----
 
 ## Tags Section
 
@@ -248,7 +229,6 @@ They answer:
 * How do I classify this source?
 * How might I retrieve it later?
 
----
 
 ### Tag Display
 
@@ -258,7 +238,6 @@ They answer:
 
 Tags are lightweight and flexible by design.
 
----
 
 ### AddTagDialog
 
@@ -268,7 +247,6 @@ Tags are lightweight and flexible by design.
 
 This supports emergent taxonomy rather than rigid classification.
 
----
 
 ## Metadata Section
 
@@ -278,7 +256,6 @@ Provides **bibliographic completeness**.
 
 This section is deliberately understated.
 
----
 
 ### Displayed Fields
 
@@ -293,7 +270,6 @@ Conditionally shown based on availability:
 
 This supports archival and export use cases.
 
----
 
 ## Highlights Preview
 
@@ -303,7 +279,6 @@ Highlights act as **evidence of engagement**.
 
 This section reminds the user what stood out.
 
----
 
 ### Design Principles
 
@@ -313,7 +288,6 @@ This section reminds the user what stood out.
 
 Highlights are treated as memory anchors.
 
----
 
 ## Similar Books Section
 
@@ -329,7 +303,6 @@ It is intended to support:
 
 Its absence does not block core workflows.
 
----
 
 ## Destructive Actions
 
@@ -349,7 +322,6 @@ The dialog makes clear that:
 
 This preserves user trust.
 
----
 
 ## Design Invariants Enforced by This Screen
 
@@ -359,7 +331,6 @@ This preserves user trust.
 * Graph navigation happens elsewhere
 * The book is never reduced to a container
 
----
 
 ### Invariant 2: Metadata Is Stable
 
@@ -367,7 +338,6 @@ This preserves user trust.
 * Changes are deliberate
 * Reloads reflect canonical state
 
----
 
 ### Invariant 3: Actions Are Intentional
 
@@ -375,7 +345,6 @@ This preserves user trust.
 * No accidental mutations
 * No hidden side effects
 
----
 
 ### Invariant 4: Engagement Is Visible
 
@@ -385,7 +354,6 @@ This preserves user trust.
 
 This reinforces the value created from the book.
 
----
 
 ## Summary
 
@@ -420,7 +388,6 @@ The Library Screen is a **curated, narrative overview of intellectual territory*
 
 This documentation is intended for engineers and designers working on **discovery, navigation, and long-term reading continuity**.
 
----
 
 ## Architectural Role of the Library Screen
 
@@ -433,7 +400,6 @@ This documentation is intended for engineers and designers working on **discover
 
 Every other screen is entered from here, implicitly or explicitly.
 
----
 
 ## Conceptual Model
 
@@ -446,7 +412,6 @@ The Library Screen treats books as:
 
 The UI is optimized for **recognition over recall**.
 
----
 
 ## LibraryViewModel
 
@@ -462,7 +427,6 @@ It is responsible for:
 * Managing destructive actions safely
 * Maintaining UI loading and error state
 
----
 
 ### Core State Streams
 
@@ -474,7 +438,6 @@ It is responsible for:
 
 No carousel fetches independently.
 
----
 
 #### Carousel Streams
 
@@ -502,7 +465,6 @@ Each carousel is a **derived semantic view**, not a separate dataset.
 * Requires at least two books per tag
 * Avoids visual noise from singleton categories
 
----
 
 #### Reading Analytics
 
@@ -514,7 +476,6 @@ The weekly minutes read metric:
 
 It is informative, not competitive.
 
----
 
 #### UI State
 
@@ -527,7 +488,6 @@ Tracks:
 
 All transient concerns are isolated here.
 
----
 
 ## LibraryScreen
 
@@ -542,7 +502,6 @@ Its design goals are:
 * Progressive disclosure of detail
 * Strong empty-state guidance
 
----
 
 ### Screen States
 
@@ -562,7 +521,6 @@ Its design goals are:
 * Vertical stack of horizontal carousels
 * Each carousel answers a different cognitive question
 
----
 
 ## LibraryTopBar
 
@@ -570,7 +528,6 @@ Its design goals are:
 
 Provides **global context and lightweight analytics**.
 
----
 
 ### Elements
 
@@ -581,7 +538,6 @@ Provides **global context and lightweight analytics**.
 The analytics badge is intentionally subtle.
 It informs without pressuring.
 
----
 
 ## BookCarousel
 
@@ -596,7 +552,6 @@ Carousels answer questions like:
 * What did I value?
 * How do I group my sources?
 
----
 
 ### Design Characteristics
 
@@ -607,7 +562,6 @@ Carousels answer questions like:
 
 This mirrors proven discovery patterns while preserving meaning.
 
----
 
 ## BookCard
 
@@ -617,7 +571,6 @@ The BookCard is the **atomic unit of library browsing**.
 
 It must communicate maximum signal in minimal space.
 
----
 
 ### Visual Hierarchy
 
@@ -631,7 +584,6 @@ It must communicate maximum signal in minimal space.
 
 Each element earns its place.
 
----
 
 ### Progress Representation
 
@@ -642,7 +594,6 @@ Progress is shown in two ways:
 
 Only displayed when meaningful.
 
----
 
 ### Badges
 
@@ -654,7 +605,6 @@ Badges represent **idea density**, not usage:
 They answer:
 “Has this book produced thought?”
 
----
 
 ## EmptyLibraryState
 
@@ -668,7 +618,6 @@ It must:
 * Remove ambiguity
 * Invite immediate action
 
----
 
 ### Design Intent
 
@@ -678,7 +627,6 @@ It must:
 
 Empty is treated as a beginning, not a failure.
 
----
 
 ## Destructive Actions
 
@@ -696,7 +644,6 @@ The dialog explicitly lists:
 
 This reinforces trust and predictability.
 
----
 
 ## Design Invariants Enforced by This Screen
 
@@ -706,7 +653,6 @@ This reinforces trust and predictability.
 * No overwhelming grids
 * Meaningful grouping only
 
----
 
 ### Invariant 2: Progress Is Respected
 
@@ -714,7 +660,6 @@ This reinforces trust and predictability.
 * Recent engagement matters
 * Abandoned books fade naturally
 
----
 
 ### Invariant 3: Value Is Visible
 
@@ -722,7 +667,6 @@ This reinforces trust and predictability.
 * Highlights and notes surface insight
 * Badges signal depth
 
----
 
 ### Invariant 4: Actions Are Intentional
 
@@ -730,7 +674,6 @@ This reinforces trust and predictability.
 * Delete is gated
 * Navigation is deliberate
 
----
 
 ### Invariant 5: Discovery Is Gentle
 
@@ -738,7 +681,6 @@ This reinforces trust and predictability.
 * Carousels invite exploration
 * No algorithmic overreach
 
----
 
 ## Relationship to Other Screens
 
@@ -749,7 +691,6 @@ This reinforces trust and predictability.
 
 The Library Screen is the **map**, not the territory.
 
----
 
 ## Summary
 
@@ -786,7 +727,6 @@ It answers, at all times:
 
 This documentation is intended for engineers responsible for **application flow, navigation correctness, and long-term UX stability**.
 
----
 
 ## Architectural Role of the Navigation Layer
 
@@ -800,7 +740,6 @@ This documentation is intended for engineers responsible for **application flow,
 No feature owns navigation.
 Navigation owns features.
 
----
 
 ## Conceptual Navigation Model
 
@@ -813,7 +752,6 @@ The app follows a **hub-and-spoke model**:
 
 This structure minimizes disorientation while supporting depth.
 
----
 
 ## Navigation Routes
 
@@ -835,7 +773,6 @@ Routes fall into two categories:
 * **Detail destinations**
   Book Details, Reader, Import
 
----
 
 ### Parameterized Routes
 
@@ -847,7 +784,6 @@ Routes such as Book Details and Reader:
 
 This prevents state duplication and navigation bugs.
 
----
 
 ## Bottom Navigation Model
 
@@ -861,7 +797,6 @@ Each tab answers a different question:
 * Notes: What ideas have I formed?
 * Settings: How does this system behave?
 
----
 
 ### Design Constraints
 
@@ -871,7 +806,6 @@ Each tab answers a different question:
 
 This keeps spatial memory intact.
 
----
 
 ## EPubReaderApp Composable
 
@@ -887,7 +821,6 @@ It is responsible for:
 
 Nothing above this composable is stateful.
 
----
 
 ### Bottom Bar Visibility Rules
 
@@ -905,7 +838,6 @@ It is hidden on:
 
 This reinforces **focus vs navigation** modes.
 
----
 
 ## NavHost and Graph Structure
 
@@ -918,7 +850,6 @@ This reflects the mental model that:
 * Books are the starting material
 * Everything else emerges from them
 
----
 
 ### Library Flow
 
@@ -928,7 +859,6 @@ This is the most common path and is intentionally linear.
 
 Back navigation always reverses this path cleanly.
 
----
 
 ### Notes Flow
 
@@ -938,7 +868,6 @@ This flow is **non-linear by design**.
 
 Navigation allows jumping between notes without collapsing the back stack prematurely.
 
----
 
 ### Reader Flow
 
@@ -948,7 +877,6 @@ Reader is treated as a **deep immersion state**.
 * Only explicit back navigation exits
 * State is preserved during configuration changes
 
----
 
 ### Import Flow
 
@@ -958,7 +886,6 @@ Import is a **temporary workflow**.
 * Always exited explicitly
 * Never part of the bottom navigation stack
 
----
 
 ## Back Stack Management
 
@@ -970,7 +897,6 @@ The navigation configuration enforces:
 * State restoration on tab reselection
 * No uncontrolled stack growth
 
----
 
 ### popUpTo Strategy
 
@@ -982,7 +908,6 @@ When switching tabs:
 
 This ensures predictable back behavior.
 
----
 
 ## BottomNavigationBar
 
@@ -990,7 +915,6 @@ This ensures predictable back behavior.
 
 Provides **stable, always-available orientation**.
 
----
 
 ### Selection Logic
 
@@ -1000,7 +924,6 @@ Provides **stable, always-available orientation**.
 
 This prevents accidental mis-highlighting.
 
----
 
 ### Navigation Behavior
 
@@ -1010,7 +933,6 @@ This prevents accidental mis-highlighting.
 
 This matches modern Android navigation expectations.
 
----
 
 ## Settings Screen
 
@@ -1022,7 +944,6 @@ This is by design.
 
 It is a **configuration surface**, not an exploration space.
 
----
 
 ### Sectioning
 
@@ -1034,7 +955,6 @@ Settings are grouped into:
 
 Each section is visually separated and semantically scoped.
 
----
 
 ### SettingsItem Design
 
@@ -1045,7 +965,6 @@ Each section is visually separated and semantically scoped.
 
 No ambiguous affordances.
 
----
 
 ## Import Screen
 
@@ -1058,7 +977,6 @@ It explicitly separates:
 * Book import
 * Note export policy
 
----
 
 ### Design Intent
 
@@ -1068,7 +986,6 @@ It explicitly separates:
 
 The note about export-only notes is intentionally explicit.
 
----
 
 ## ImportOption Component
 
@@ -1080,7 +997,6 @@ Each option:
 
 There are no background scans or auto-imports.
 
----
 
 ## Deep Linking Considerations
 
@@ -1092,7 +1008,6 @@ The current architecture supports future deep linking because:
 
 Deep linking can be added without restructuring.
 
----
 
 ## Design Invariants Enforced by Navigation
 
@@ -1102,7 +1017,6 @@ Deep linking can be added without restructuring.
 * Back behavior is predictable
 * No hidden navigation paths
 
----
 
 ### Invariant 2: Focus Is Respected
 
@@ -1110,7 +1024,6 @@ Deep linking can be added without restructuring.
 * Import isolates workflow
 * Detail screens reduce distractions
 
----
 
 ### Invariant 3: State Is Preserved
 
@@ -1118,7 +1031,6 @@ Deep linking can be added without restructuring.
 * Navigation avoids unnecessary recomposition
 * Data reloads are explicit
 
----
 
 ### Invariant 4: Features Are Decoupled
 
@@ -1126,7 +1038,6 @@ Deep linking can be added without restructuring.
 * Navigation decisions are centralized
 * Features remain testable in isolation
 
----
 
 ## Relationship to the Overall System
 
@@ -1139,7 +1050,6 @@ Deep linking can be added without restructuring.
 Navigation does not create meaning.
 It preserves continuity so meaning can accumulate.
 
----
 
 ## Summary
 
